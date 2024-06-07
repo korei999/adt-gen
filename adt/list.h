@@ -20,7 +20,7 @@
                                                                                                                        \
     [[maybe_unused]] static inline NAME##_##T NAME##Create_##T()                                                       \
     {                                                                                                                  \
-        return (NAME##_##T) {.pFirst = nullptr, .pLast = nullptr};                                                     \
+        return (NAME##_##T) {.pFirst = nullptr, .pLast = nullptr, .size = 0};                                          \
     }                                                                                                                  \
                                                                                                                        \
     [[maybe_unused]] static inline NAME##Node_##T* NAME##PushBack_##T(NAME##_##T* restrict self, T value)              \
