@@ -25,7 +25,7 @@ intCmp(int a, int b)
         size_t capacity;                                                                                               \
     } NAME##_##T;                                                                                                      \
                                                                                                                        \
-    typedef struct NAME##Node_##T                                                                                      \
+    typedef struct NAME##ReturnNode_##T                                                                                \
     {                                                                                                                  \
         LIST##Node_##T* pNode;                                                                                         \
         size_t hash;                                                                                                   \
