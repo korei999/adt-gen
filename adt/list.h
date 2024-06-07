@@ -13,14 +13,14 @@
                                                                                                                        \
     typedef struct NAME##_##T                                                                                          \
     {                                                                                                                  \
-        struct NAME##Node_##T* pFirst;                                                                                 \
-        struct NAME##Node_##T* pLast;                                                                                  \
+        NAME##Node_##T* pFirst;                                                                                        \
+        NAME##Node_##T* pLast;                                                                                         \
         size_t size;                                                                                                   \
     } NAME##_##T;                                                                                                      \
                                                                                                                        \
     [[maybe_unused]] static inline NAME##_##T NAME##Create_##T()                                                       \
     {                                                                                                                  \
-        return (NAME##_##T) {.pFirst = nullptr, .pLast = nullptr, .size = 0};                                          \
+        return (NAME##_##T) {.pFirst = NULL, .pLast = NULL, .size = 0};                                                \
     }                                                                                                                  \
                                                                                                                        \
     [[maybe_unused]] static inline NAME##Node_##T* NAME##PushBack_##T(NAME##_##T* restrict self, T value)              \
@@ -46,7 +46,7 @@
                                                                                                                        \
     [[maybe_unused]] static inline void NAME##Clean_##T(NAME##_##T* restrict self)                                     \
     {                                                                                                                  \
-        for (NAME##Node_##T* it = self->pFirst; it != nullptr;)                                                        \
+        for (NAME##Node_##T* it = self->pFirst; it;)                                                                   \
         {                                                                                                              \
             NAME##Node_##T* pSNext = it->pNext;                                                                        \
             free(it);                                                                                                  \
@@ -61,7 +61,7 @@
             if (CMP(it->data, value) == 0)                                                                             \
                 return it;                                                                                             \
         }                                                                                                              \
-        return nullptr;                                                                                                \
+        return NULL;                                                                                                   \
     }                                                                                                                  \
                                                                                                                        \
     [[maybe_unused]] static inline void NAME##Remove_##T(NAME##_##T* self, NAME##Node_##T* restrict pNode)             \
@@ -70,13 +70,13 @@
         {                                                                                                              \
             self->pFirst = self->pFirst->pNext;                                                                        \
             if (self->pFirst)                                                                                          \
-                self->pFirst->pPrev = nullptr;                                                                         \
+                self->pFirst->pPrev = NULL;                                                                            \
         }                                                                                                              \
         else if (pNode == self->pLast)                                                                                 \
         {                                                                                                              \
             self->pLast = self->pLast->pPrev;                                                                          \
             if (self->pLast)                                                                                           \
-                self->pLast->pNext = nullptr;                                                                          \
+                self->pLast->pNext = NULL;                                                                             \
         }                                                                                                              \
         else                                                                                                           \
         {                                                                                                              \
