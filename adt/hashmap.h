@@ -14,7 +14,6 @@ intCmp(int a, int b)
 
 #define HASHMAP_GEN_CODE(NAME, LIST, T, FNHASH, CMP, LOAD_FACTOR)                                                      \
     /* NAME: prefix, T: of T type + suffix, NOTE: hashmap will also generate a list */                                 \
-    /* (calls `LIST_GEN_CODE(LIST, T)`) */                                                                             \
     LIST_GEN_CODE(LIST, T, CMP);                                                                                       \
                                                                                                                        \
     typedef struct NAME##_##T                                                                                          \
