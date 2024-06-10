@@ -4,6 +4,7 @@
 #include "adt/threadpool.h"
 
 #include <string.h>
+#include <unistd.h>
 
 #define LENGTH(A) (sizeof(A) / sizeof(A[0]))
 
@@ -57,6 +58,16 @@ printMap(const HashMap_pChar* restrict pMap)
     }
 }
 
+
+atomic_int kek = 0;
+
+int
+hello(void* pArg)
+{
+    COUT("HELLO BIDEN: %d\n", ++kek);
+    return 0;
+}
+
 int
 main()
 {
@@ -80,6 +91,21 @@ main()
     COUT("\n");
 
     QIntClean(&q);
+
+    auto tp = ThreadPoolCreate(4);
+    ThreadPoolStart(&tp);
+
+    JobQueueNode j0 = {
+        .pFn = hello,
+        .pArg = nullptr
+    };
+
+    for (int i = 0; i < 12 * 2; i++)
+        ThreadPoolSubmit(&tp, j0);
+
+    ThreadPoolWait(&tp);
+    ThreadPoolStop(&tp);
+    ThreadPoolClean(&tp);
 
     return 0;
 }

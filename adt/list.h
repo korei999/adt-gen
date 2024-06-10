@@ -1,5 +1,4 @@
 #pragma once
-
 #include "common.h"
 
 #define LIST_GEN_CODE(NAME, T, CMP)                                                                                    \
