@@ -1,6 +1,7 @@
 #include "logs.h"
 #include "adt/hashmap.h"
 #include "adt/array.h"
+#include "adt/threadpool.h"
 
 #include <string.h>
 
@@ -16,7 +17,7 @@ hashFNV(const char* str)
     return hash;
 }
 
-static inline void
+[[maybe_unused]] static inline void
 randomString(char* dest, size_t length)
 {
     const char charset[] = "0123456789"
@@ -31,12 +32,14 @@ randomString(char* dest, size_t length)
 
 typedef char* pChar;
 
-HASHMAP_GEN_CODE(HashMap, List, pChar, hashFNV, strcmp, HASHMAP_DEFAULT_LOAD_FACTOR);
+HASHMAP_GEN_CODE(HashMap, List, pChar, hashFNV, strcmp, ADT_HASHMAP_DEFAULT_LOAD_FACTOR);
 ARRAY_GEN_CODE(Array, pChar);
 LIST_GEN_CODE(List, int, intCmp);
 
 typedef ListNode_int* pListNode_int;
 ARRAY_GEN_CODE(Array, pListNode_int);
+
+QUEUE_GEN_CODE(QInt, int);
 
 void
 printMap(const HashMap_pChar* restrict pMap)
@@ -57,56 +60,26 @@ printMap(const HashMap_pChar* restrict pMap)
 int
 main()
 {
-    auto mapS = HashMapCreate_pChar(HASHMAP_DEFAULT_SIZE);
-    auto aCleanList = ArrayCreate_pChar(ARRAY_DEFAULT_SIZE);
+    auto q = QIntCreate(1);
+    QIntPush(&q, 1);
+    QIntPush(&q, 2);
+    QIntPush(&q, 3);
+    QIntPush(&q, 4);
+    QIntPush(&q, 5);
+    QIntPush(&q, 6);
 
-    char aTmp[10];
-    for (size_t i = 0; i < 50000; i++)
-    {
-        memset(aTmp, 0, LENGTH(aTmp));
-        randomString(aTmp, (rand() % 3) + 5);
-        char* pS = calloc(LENGTH(aTmp), sizeof(*pS));
-        strcpy(pS, aTmp);
-        ArrayPush_pChar(&aCleanList, HashMapInsert_pChar(&mapS, pS)->data);
-    }
-    HashMapInsert_pChar(&mapS, "KEKW123");
-
-    // printMap(&mapS);
-    COUT("load: %lf, bucketCount: %zu, entryCount: %zu, cap: %zu\n",
-         HashMapGetLoadFactor_pChar(&mapS), mapS.bucketCount, mapS.entryCount, mapS.capacity);
-
-    auto pFound = HashMapSearch_pChar(&mapS, "KEKW123");
-    COUT("pFound: '%s', hash: %zu\n", pFound.pNode ? pFound.pNode->data : "(nill)", pFound.hash);
-
-    for (size_t i = 0; i < aCleanList.size; i++)
-        free(aCleanList.pData[i]);
-    ArrayClean_pChar(&aCleanList);
-
-    HashMapClean_pChar(&mapS);
-
-    auto listInt = ListCreate_int();
-    auto aInts = ArrayCreate_pListNode_int(10);
-
-    for (int i = 0; i < 10; i++)
-        ArrayPush_pListNode_int(&aInts, ListPushBack_int(&listInt, i));
-
-    for (auto it = listInt.pFirst; it; it = it->pNext)
-        COUT("%d, ", it->data);
+    for (long t = 0; t < q.size; t++)
+        COUT("'%d', ", q.pData[t]);
     COUT("\n");
 
-    ListRemove_int(&listInt, aInts.pData[0]);
-    ListRemove_int(&listInt, aInts.pData[2]);
-    ListRemove_int(&listInt, aInts.pData[aInts.size - 1]);
-    ListRemove_int(&listInt, aInts.pData[4]);
-    ListRemoveValue_int(&listInt, 6);
-    ListRemoveValue_int(&listInt, 8);
+    QIntPop(&q);
+    QIntPop(&q);
 
-    for (auto it = listInt.pFirst; it; it = it->pNext)
-        COUT("%d, ", it->data);
+    for (long i = QIntFirstI(&q), t = 0; t < q.size; i = QIntNextI(&q, i), t++)
+        COUT("'%d', ", q.pData[i]);
     COUT("\n");
 
-    ListClean_int(&listInt);
-    ArrayClean_pListNode_int(&aInts);
+    QIntClean(&q);
 
     return 0;
 }

@@ -1,6 +1,6 @@
 #pragma once
 
-#include <stdlib.h>
+#include "common.h"
 
 #define LIST_GEN_CODE(NAME, T, CMP)                                                                                    \
     /* NAME: prefix, T: of T type + suffix */                                                                          \

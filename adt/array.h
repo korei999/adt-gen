@@ -1,11 +1,9 @@
 #pragma once
 
-#include <stdlib.h>
-
-#define ARRAY_DEFAULT_SIZE 16
+#include "common.h"
 
 #define ARRAY_GEN_CODE(NAME, T)                                                                                        \
-    /* NAME: prefix, T: of T type + suffix */                                                                          \
+    /* NAME: prefix, T: of T type + ending */                                                                          \
     typedef struct NAME##_##T                                                                                          \
     {                                                                                                                  \
         T* pData;                                                                                                      \
@@ -35,8 +33,8 @@
         free(self->pData);                                                                                             \
     }                                                                                                                  \
                                                                                                                        \
-    [[maybe_unused]] static inline T NAME##Pop_##T(NAME##_##T* restrict self)                                          \
+    [[maybe_unused]] static inline T* NAME##Pop_##T(NAME##_##T* restrict self)                                         \
     {                                                                                                                  \
         assert(self->size > 0 && "poping empty array");                                                                \
-        return self->pData[--self->size];                                                                              \
+        return &self->pData[--self->size];                                                                             \
     }

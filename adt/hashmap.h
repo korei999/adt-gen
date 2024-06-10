@@ -9,8 +9,7 @@ intCmp(int a, int b)
     else return 0;
 }
 
-#define HASHMAP_DEFAULT_LOAD_FACTOR 2.0
-#define HASHMAP_DEFAULT_SIZE 16
+#define ADT_HASHMAP_DEFAULT_LOAD_FACTOR 2.0
 
 #define HASHMAP_GEN_CODE(NAME, LIST, T, FNHASH, CMP, LOAD_FACTOR)                                                      \
     /* NAME: prefix, T: of T type + suffix, NOTE: hashmap will also generate a list */                                 \
@@ -24,11 +23,11 @@ intCmp(int a, int b)
         size_t capacity;                                                                                               \
     } NAME##_##T;                                                                                                      \
                                                                                                                        \
-    typedef struct NAME##ReturnNode_##T                                                                                \
+    typedef struct NAME##ReturnNode                                                                                \
     {                                                                                                                  \
         LIST##Node_##T* pNode;                                                                                         \
         size_t hash;                                                                                                   \
-    } NAME##ReturnNode_##T;                                                                                            \
+    } NAME##ReturnNode;                                                                                            \
                                                                                                                        \
     static inline LIST##Node_##T* NAME##Insert_##T(NAME##_##T* restrict self, T value);                                \
                                                                                                                        \
@@ -76,8 +75,8 @@ intCmp(int a, int b)
         return LIST##PushBack_##T(&self->pBuckets[hash], value);                                                       \
     }                                                                                                                  \
                                                                                                                        \
-    [[maybe_unused]] static inline NAME##ReturnNode_##T NAME##Search_##T(NAME##_##T* restrict self, T value)           \
+    [[maybe_unused]] static inline NAME##ReturnNode NAME##Search_##T(NAME##_##T* restrict self, T value)           \
     {                                                                                                                  \
         size_t hash = FNHASH(value) % self->capacity;                                                                  \
-        return (NAME##ReturnNode_##T) {.pNode = LIST##Search_##T(&self->pBuckets[hash], value), .hash = hash};         \
+        return (NAME##ReturnNode) {.pNode = LIST##Search_##T(&self->pBuckets[hash], value), .hash = hash};         \
     }
