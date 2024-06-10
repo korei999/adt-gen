@@ -40,7 +40,7 @@ LIST_GEN_CODE(List, int, intCmp);
 typedef ListNode_int* pListNode_int;
 ARRAY_GEN_CODE(Array, pListNode_int);
 
-QUEUE_GEN_CODE(QInt, int);
+QUEUE_GEN_CODE(IntQ, int);
 
 void
 printMap(const HashMap_pChar* restrict pMap)
@@ -62,50 +62,75 @@ printMap(const HashMap_pChar* restrict pMap)
 atomic_int kek = 0;
 
 int
-hello([[maybe_unused]] void* pArg)
+hello0([[maybe_unused]] void* pArg)
 {
-    COUT("HELLO BIDEN: %d\n", ++kek);
+    // sleep(2);
+    long i = 0;
+    while (i++ <= 999999999)
+        ;
+    COUT("%d, ", ++kek);
+    return 0;
+}
+
+int
+hello1([[maybe_unused]] void* pArg)
+{
+    // sleep(2);
+    double i = 0;
+    while (i++ <= 9999999.9f)
+        ;
+    COUT("%d, ", ++kek);
     return 0;
 }
 
 int
 main()
 {
-    auto q = QIntCreate(1);
-    QIntPush(&q, 1);
-    QIntPush(&q, 2);
-    QIntPush(&q, 3);
-    QIntPush(&q, 4);
-    QIntPush(&q, 5);
-    QIntPush(&q, 6);
+    auto q = IntQCreate(1);
+    IntQPush(&q, 1);
+    IntQPush(&q, 2);
+    IntQPush(&q, 3);
+    IntQPush(&q, 4);
+    IntQPush(&q, 5);
+    IntQPush(&q, 6);
 
     for (long t = 0; t < q.size; t++)
         COUT("'%d', ", q.pData[t]);
     COUT("\n");
 
-    QIntPop(&q);
-    QIntPop(&q);
+    IntQPop(&q);
+    IntQPop(&q);
 
-    for (long i = QIntFirstI(&q), t = 0; t < q.size; i = QIntNextI(&q, i), t++)
+    for (long i = IntQFirstI(&q), t = 0; t < q.size; i = IntQNextI(&q, i), t++)
         COUT("'%d', ", q.pData[i]);
     COUT("\n");
 
-    QIntClean(&q);
+    IntQClean(&q);
 
-    auto tp = ThreadPoolCreate(12);
+    COUT("available threads: %d\n", THREAD_NPROCS());
+    auto tp = ThreadPoolCreate(THREAD_NPROCS());
     ThreadPoolStart(&tp);
 
     TaskNode j0 = {
-        .pFn = hello,
+        .pFn = hello0,
+        .pArg = nullptr
+    };
+    TaskNode j1 = {
+        .pFn = hello1,
         .pArg = nullptr
     };
 
-    for (int i = 0; i < 12 * 2; i++)
-        ThreadPoolSubmit(&tp, j0);
+    for (size_t i = 0; i < 50; i++)
+        if (i % 2 == 0)
+            ThreadPoolSubmit(&tp, j0);
+        else
+            ThreadPoolSubmit(&tp, j1);
 
     ThreadPoolWait(&tp);
     ThreadPoolStop(&tp);
     ThreadPoolClean(&tp);
+
+    COUT("\n");
 
     return 0;
 }

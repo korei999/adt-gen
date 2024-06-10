@@ -4,6 +4,11 @@
 #include <stdatomic.h>
 #include <threads.h>
 
+#ifdef __linux__
+#include <sys/sysinfo.h>
+#define THREAD_NPROCS() get_nprocs()
+#endif
+
 typedef struct JobNode
 {
     thrd_start_t pFn;
@@ -61,7 +66,9 @@ threadLoop(void* pData)
         }
 
         j.pFn(j.pArg);
-        if (self->qJobs.size == 0)
+
+        /* no mutex lock so using `busy()` here */
+        if (!ThreadPoolBusy(self))
             cnd_signal(&self->cndWait);
     }
 
@@ -83,9 +90,9 @@ static inline ThreadPool
 ThreadPoolCreate(size_t nThreads)
 {
     ThreadPool tp;
-    tp.bDone = false,
-    tp.aThreads = (thrd_t*)calloc(nThreads, sizeof(thrd_t)),
-    tp.nThreads = nThreads,
+    tp.bDone = false;
+    tp.aThreads = (thrd_t*)calloc(nThreads, sizeof(thrd_t));
+    tp.nThreads = nThreads;
     cnd_init(&tp.cndQ);
     mtx_init(&tp.mtxQ, mtx_plain);
     cnd_init(&tp.cndWait);
@@ -113,6 +120,7 @@ ThreadPoolStart(ThreadPool* self)
         thrd_create(&self->aThreads[i], threadLoop, self);
 }
 
+/* wait until last task is finished */
 static inline void
 ThreadPoolWait(ThreadPool* self)
 {
