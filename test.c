@@ -62,7 +62,7 @@ printMap(const HashMap_pChar* restrict pMap)
 atomic_int kek = 0;
 
 int
-hello(void* pArg)
+hello([[maybe_unused]] void* pArg)
 {
     COUT("HELLO BIDEN: %d\n", ++kek);
     return 0;
@@ -92,10 +92,10 @@ main()
 
     QIntClean(&q);
 
-    auto tp = ThreadPoolCreate(4);
+    auto tp = ThreadPoolCreate(12);
     ThreadPoolStart(&tp);
 
-    JobQueueNode j0 = {
+    TaskNode j0 = {
         .pFn = hello,
         .pArg = nullptr
     };
