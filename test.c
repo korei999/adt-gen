@@ -59,16 +59,16 @@ printMap(const HashMap_pChar* restrict pMap)
 }
 
 
-atomic_int kek = 0;
+atomic_int ai = 0;
 
 int
 hello0([[maybe_unused]] void* pArg)
 {
     // sleep(2);
-    long i = 0;
-    while (i++ <= 999999999)
-        ;
-    COUT("%d, ", ++kek);
+    // long i = 0;
+    // while (i++ <= 999999999)
+        // ;
+    COUT("%d, ", ++ai);
     return 0;
 }
 
@@ -76,10 +76,10 @@ int
 hello1([[maybe_unused]] void* pArg)
 {
     // sleep(2);
-    double i = 0;
-    while (i++ <= 9999999.9f)
-        ;
-    COUT("%d, ", ++kek);
+    // double i = 0;
+    // while (i++ <= 19999999.9f)
+        // ;
+    COUT("%d, ", ++ai);
     return 0;
 }
 
@@ -107,8 +107,8 @@ main()
 
     IntQClean(&q);
 
-    COUT("available threads: %d\n", THREAD_NPROCS());
-    auto tp = ThreadPoolCreate(THREAD_NPROCS());
+    COUT("available threads: %d\n", THREAD_NPROCS);
+    auto tp = ThreadPoolCreate(THREAD_NPROCS);
     ThreadPoolStart(&tp);
 
     TaskNode j0 = {
@@ -120,12 +120,13 @@ main()
         .pArg = nullptr
     };
 
-    for (size_t i = 0; i < 50; i++)
+    for (size_t i = 0; i < 100; i++)
         if (i % 2 == 0)
             ThreadPoolSubmit(&tp, j0);
         else
             ThreadPoolSubmit(&tp, j1);
 
+    COUT("wait...\n");
     ThreadPoolWait(&tp);
     ThreadPoolStop(&tp);
     ThreadPoolClean(&tp);

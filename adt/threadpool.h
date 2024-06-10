@@ -5,11 +5,11 @@
 #include <threads.h>
 
 #ifdef __linux__
-#include <sys/sysinfo.h>
-#define THREAD_NPROCS() get_nprocs()
+    #include <sys/sysinfo.h>
+    #define THREAD_NPROCS get_nprocs()
 #endif
 
-typedef struct JobNode
+typedef struct TaskNode
 {
     thrd_start_t pFn;
     void* pArg;
@@ -26,14 +26,14 @@ typedef struct ThreadPool
     mtx_t mtxQ;
     cnd_t cndWait;
     mtx_t mtxWait;
-    TaskQ qJobs;
+    TaskQ qTasks;
 } ThreadPool;
 
 bool
 ThreadPoolBusy(ThreadPool* self)
 {
     mtx_lock(&self->mtxQ);
-    bool ret = self->qJobs.size > 0;
+    bool ret = self->qTasks.size > 0;
     mtx_unlock(&self->mtxQ);
 
     return ret;
@@ -50,7 +50,7 @@ threadLoop(void* pData)
         {
             mtx_lock(&self->mtxQ);
 
-            while (!(self->qJobs.size > 0 || self->bDone))
+            while (!(self->qTasks.size > 0 || self->bDone))
                 cnd_wait(&self->cndQ, &self->mtxQ);
 
             if (self->bDone)
@@ -59,8 +59,8 @@ threadLoop(void* pData)
                 return 0;
             }
 
-            j = *TaskQFirst(&self->qJobs);
-            TaskQPop(&self->qJobs);
+            j = *TaskQFirst(&self->qTasks);
+            TaskQPop(&self->qTasks);
 
             mtx_unlock(&self->mtxQ);
         }
@@ -76,11 +76,11 @@ threadLoop(void* pData)
 }
 
 static inline void
-ThreadPoolSubmit(ThreadPool* self, TaskNode job)
+ThreadPoolSubmit(ThreadPool* self, TaskNode task)
 {
     {
         mtx_lock(&self->mtxQ);
-        TaskQPush(&self->qJobs, job);
+        TaskQPush(&self->qTasks, task);
         mtx_unlock(&self->mtxQ);
     }
     cnd_signal(&self->cndQ);
@@ -97,7 +97,7 @@ ThreadPoolCreate(size_t nThreads)
     mtx_init(&tp.mtxQ, mtx_plain);
     cnd_init(&tp.cndWait);
     mtx_init(&tp.mtxWait, mtx_plain);
-    tp.qJobs = TaskQCreate(nThreads);
+    tp.qTasks = TaskQCreate(nThreads);
 
     return tp;
 }
@@ -106,7 +106,7 @@ static inline void
 ThreadPoolClean(ThreadPool* self)
 {
     free(self->aThreads);
-    TaskQClean(&self->qJobs);
+    TaskQClean(&self->qTasks);
     cnd_destroy(&self->cndQ);
     mtx_destroy(&self->mtxQ);
     cnd_destroy(&self->cndWait);
