@@ -2,7 +2,6 @@
 #include "common.h"
 
 #define ARRAY_GEN_CODE(NAME, T)                                                                                        \
-    /* NAME: prefix, T: of T type + ending */                                                                          \
     typedef struct NAME                                                                                                \
     {                                                                                                                  \
         T* pData;                                                                                                      \

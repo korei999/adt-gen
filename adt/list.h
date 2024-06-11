@@ -2,7 +2,6 @@
 #include "common.h"
 
 #define LIST_GEN_CODE(NAME, T, CMP)                                                                                    \
-    /* NAME: prefix, T: of T type + suffix */                                                                          \
     typedef struct NAME##Node                                                                                          \
     {                                                                                                                  \
         T data;                                                                                                        \

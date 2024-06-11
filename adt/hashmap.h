@@ -4,7 +4,7 @@
 #define ADT_HASHMAP_DEFAULT_LOAD_FACTOR 2.0
 
 #define HASHMAP_GEN_CODE(NAME, LIST, T, FNHASH, CMP, LOAD_FACTOR)                                                      \
-    /* NAME: prefix, T: of T type + suffix, NOTE: hashmap will also generate a list */                                 \
+    /* NOTE: hashmap will also generate a list */                                                                      \
     LIST_GEN_CODE(LIST, T, CMP);                                                                                       \
                                                                                                                        \
     typedef struct NAME                                                                                                \
