@@ -1,5 +1,4 @@
 #pragma once
-
 #include "common.h"
 
 #define ARRAY_GEN_CODE(NAME, T)                                                                                        \
