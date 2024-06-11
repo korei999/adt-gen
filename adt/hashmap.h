@@ -19,6 +19,7 @@
     {                                                                                                                  \
         LIST##Node* pNode;                                                                                             \
         size_t hash;                                                                                                   \
+        bool bInserted;                                                                                                \
     } NAME##ReturnNode;                                                                                                \
                                                                                                                        \
     static inline LIST##Node* NAME##Insert(NAME* self, T value);                                                       \
@@ -69,5 +70,25 @@
     [[maybe_unused]] static inline NAME##ReturnNode NAME##Search(NAME* restrict self, T value)                         \
     {                                                                                                                  \
         size_t hash = FNHASH(value) % self->capacity;                                                                  \
-        return (NAME##ReturnNode) {.pNode = LIST##Search(&self->pBuckets[hash], value), .hash = hash};                 \
+        LIST##Node* pNode = LIST##Search(&self->pBuckets[hash], value);                                                \
+        bool bInserted = pNode ? true : false;                                                                         \
+                                                                                                                       \
+        return (NAME##ReturnNode) {.pNode = pNode, .hash = hash, .bInserted = bInserted};                              \
+    }                                                                                                                  \
+                                                                                                                       \
+    [[maybe_unused]] static inline NAME##ReturnNode NAME##TryInsert(NAME* self, T value)                               \
+    {                                                                                                                  \
+        NAME##ReturnNode tried = NAME##Search(self, value);                                                            \
+                                                                                                                       \
+        if (tried.pNode)                                                                                               \
+        {                                                                                                              \
+            tried.bInserted = false;                                                                                   \
+            return tried;                                                                                              \
+        }                                                                                                              \
+        else                                                                                                           \
+        {                                                                                                              \
+            tried.pNode = NAME##Insert(self, value);                                                                   \
+            tried.bInserted = true;                                                                                    \
+            return tried;                                                                                              \
+        }                                                                                                              \
     }

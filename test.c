@@ -32,11 +32,12 @@ randomString(char* dest, size_t length)
     const char charset[] = "0123456789"
                            "abcdefghijklmnopqrstuvwxyz"
                            "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    for (size_t i = 0; i < length; i++)
+    for (size_t i = 0; i < length - 1; i++)
     {
         size_t idx = rand() % (LENGTH(charset) - 1);
         dest[i] = charset[idx];
     }
+    dest[length - 1] = '\0';
 }
 
 typedef char* pChar;
@@ -147,11 +148,16 @@ main()
     HashMapPCharInsert(&hm, "the");
     HashMapPCharInsert(&hm, "then");
 
-    auto pFound0 = HashMapPCharSearch(&hm, "what");
-    COUT("found: '%s', hash: '%zu'\n", pFound0.pNode ? pFound0.pNode->data : "(nill)", pFound0.hash);
+    auto found0 = HashMapPCharSearch(&hm, "what");
+    COUT("found: '%s', hash: '%zu'\n", found0.pNode ? found0.pNode->data : "(nill)", found0.hash);
 
-    auto pFound1 = HashMapPCharSearch(&hm, "kekw");
-    COUT("found: '%s', hash: '%zu'\n", pFound1.pNode ? pFound1.pNode->data : "(nill)", pFound1.hash);
+    auto found1 = HashMapPCharSearch(&hm, "kekw");
+    COUT("found: '%s', hash: '%zu'\n", found1.pNode ? found1.pNode->data : "(nill)", found1.hash);
+
+    auto t0 = HashMapPCharTryInsert(&hm, "asdf");
+    auto t1 = HashMapPCharTryInsert(&hm, "what");
+    COUT("'%s': %s, hash: %zu\n", t0.pNode ? t0.pNode->data : "(nill)", t0.bInserted ? "true" : "false", t0.hash);
+    COUT("'%s': %s, hash: %zu\n", t1.pNode ? t1.pNode->data : "(nill)", t1.bInserted ? "true" : "false", t1.hash);
 
     printMap(&hm);
 
