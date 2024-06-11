@@ -63,7 +63,7 @@
         return NULL;                                                                                                   \
     }                                                                                                                  \
                                                                                                                        \
-    [[maybe_unused]] static inline void NAME##Remove(NAME* self, NAME##Node* restrict pNode)                           \
+    [[maybe_unused]] static inline void NAME##Remove(NAME* self, NAME##Node* pNode)                                    \
     {                                                                                                                  \
         if (pNode == self->pFirst)                                                                                     \
         {                                                                                                              \
