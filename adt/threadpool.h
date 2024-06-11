@@ -22,10 +22,8 @@ typedef struct ThreadPool
     atomic_bool bDone;
     thrd_t* aThreads;
     size_t nThreads;
-    cnd_t cndQ;
-    mtx_t mtxQ;
-    cnd_t cndWait;
-    mtx_t mtxWait;
+    cnd_t cndQ, cndWait;
+    mtx_t mtxQ, mtxWait;
     TaskQ qTasks;
 } ThreadPool;
 
