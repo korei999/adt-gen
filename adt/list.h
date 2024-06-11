@@ -3,28 +3,28 @@
 
 #define LIST_GEN_CODE(NAME, T, CMP)                                                                                    \
     /* NAME: prefix, T: of T type + suffix */                                                                          \
-    typedef struct NAME##Node_##T                                                                                      \
+    typedef struct NAME##Node                                                                                          \
     {                                                                                                                  \
         T data;                                                                                                        \
-        struct NAME##Node_##T* pNext;                                                                                  \
-        struct NAME##Node_##T* pPrev;                                                                                  \
-    } NAME##Node_##T;                                                                                                  \
+        struct NAME##Node* pNext;                                                                                      \
+        struct NAME##Node* pPrev;                                                                                      \
+    } NAME##Node;                                                                                                      \
                                                                                                                        \
-    typedef struct NAME##_##T                                                                                          \
+    typedef struct NAME                                                                                                \
     {                                                                                                                  \
-        NAME##Node_##T* pFirst;                                                                                        \
-        NAME##Node_##T* pLast;                                                                                         \
+        NAME##Node* pFirst;                                                                                            \
+        NAME##Node* pLast;                                                                                             \
         size_t size;                                                                                                   \
-    } NAME##_##T;                                                                                                      \
+    } NAME;                                                                                                            \
                                                                                                                        \
-    [[maybe_unused]] static inline NAME##_##T NAME##Create_##T()                                                       \
+    [[maybe_unused]] static inline NAME NAME##Create()                                                                 \
     {                                                                                                                  \
-        return (NAME##_##T) {.pFirst = NULL, .pLast = NULL, .size = 0};                                                \
+        return (NAME) {.pFirst = NULL, .pLast = NULL, .size = 0};                                                      \
     }                                                                                                                  \
                                                                                                                        \
-    [[maybe_unused]] static inline NAME##Node_##T* NAME##PushBack_##T(NAME##_##T* restrict self, T value)              \
+    [[maybe_unused]] static inline NAME##Node* NAME##PushBack(NAME* self, T value)                                     \
     {                                                                                                                  \
-        NAME##Node_##T* pNew = (NAME##Node_##T*)calloc(1, sizeof(NAME##Node_##T));                                     \
+        NAME##Node* pNew = (NAME##Node*)calloc(1, sizeof(NAME##Node));                                                 \
         pNew->data = value;                                                                                            \
                                                                                                                        \
         if (!self->pFirst)                                                                                             \
@@ -43,19 +43,19 @@
         return pNew;                                                                                                   \
     }                                                                                                                  \
                                                                                                                        \
-    [[maybe_unused]] static inline void NAME##Clean_##T(NAME##_##T* restrict self)                                     \
+    [[maybe_unused]] static inline void NAME##Clean(NAME* self)                                                        \
     {                                                                                                                  \
-        for (NAME##Node_##T* it = self->pFirst; it;)                                                                   \
+        for (NAME##Node* it = self->pFirst; it;)                                                                       \
         {                                                                                                              \
-            NAME##Node_##T* pSNext = it->pNext;                                                                        \
+            NAME##Node* pSNext = it->pNext;                                                                            \
             free(it);                                                                                                  \
             it = pSNext;                                                                                               \
         }                                                                                                              \
     }                                                                                                                  \
                                                                                                                        \
-    [[maybe_unused]] static inline NAME##Node_##T* NAME##Search_##T(NAME##_##T* restrict self, T value)                \
+    [[maybe_unused]] static inline NAME##Node* NAME##Search(NAME* self, T value)                                       \
     {                                                                                                                  \
-        for (NAME##Node_##T* it = self->pFirst; it; it = it->pNext)                                                    \
+        for (NAME##Node* it = self->pFirst; it; it = it->pNext)                                                        \
         {                                                                                                              \
             if (CMP(it->data, value) == 0)                                                                             \
                 return it;                                                                                             \
@@ -63,7 +63,7 @@
         return NULL;                                                                                                   \
     }                                                                                                                  \
                                                                                                                        \
-    [[maybe_unused]] static inline void NAME##Remove_##T(NAME##_##T* self, NAME##Node_##T* restrict pNode)             \
+    [[maybe_unused]] static inline void NAME##Remove(NAME* self, NAME##Node* restrict pNode)                           \
     {                                                                                                                  \
         if (pNode == self->pFirst)                                                                                     \
         {                                                                                                              \
@@ -86,7 +86,7 @@
         free(pNode);                                                                                                   \
     }                                                                                                                  \
                                                                                                                        \
-    [[maybe_unused]] static inline void NAME##RemoveValue_##T(NAME##_##T* self, T value)                               \
+    [[maybe_unused]] static inline void NAME##RemoveValue(NAME* self, T value)                                         \
     {                                                                                                                  \
-        NAME##Remove_##T(self, NAME##Search_##T(self, value));                                                         \
+        NAME##Remove(self, NAME##Search(self, value));                                                                 \
     }

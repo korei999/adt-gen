@@ -18,6 +18,14 @@ hashFNV(const char* str)
     return hash;
 }
 
+static inline int
+intCmp(int a, int b)
+{
+    if (a > b) return 1;
+    else if (a < b) return -1;
+    else return 0;
+}
+
 [[maybe_unused]] static inline void
 randomString(char* dest, size_t length)
 {
@@ -33,17 +41,17 @@ randomString(char* dest, size_t length)
 
 typedef char* pChar;
 
-HASHMAP_GEN_CODE(HashMap, List, pChar, hashFNV, strcmp, ADT_HASHMAP_DEFAULT_LOAD_FACTOR);
-ARRAY_GEN_CODE(Array, pChar);
-LIST_GEN_CODE(List, int, intCmp);
+HASHMAP_GEN_CODE(HashMapPChar, ListPChar, pChar, hashFNV, strcmp, ADT_HASHMAP_DEFAULT_LOAD_FACTOR);
+ARRAY_GEN_CODE(ArrayPChar, pChar);
+LIST_GEN_CODE(IntList, int, intCmp);
 
-typedef ListNode_int* pListNode_int;
-ARRAY_GEN_CODE(Array, pListNode_int);
+typedef IntList* pIntList;
+ARRAY_GEN_CODE(ArrayPIntList, pIntList);
 
 QUEUE_GEN_CODE(IntQ, int);
 
 void
-printMap(const HashMap_pChar* restrict pMap)
+printMap(const HashMapPChar* pMap)
 {
     COUT("mapS.size: %zu, cap: %zu\n", pMap->bucketCount, pMap->capacity);
     for (size_t i = 0; i < pMap->capacity; i++)
@@ -57,7 +65,6 @@ printMap(const HashMap_pChar* restrict pMap)
         }
     }
 }
-
 
 atomic_int ai = 0;
 
@@ -107,8 +114,8 @@ main()
 
     IntQClean(&q);
 
-    COUT("available threads: %d\n", THREAD_NPROCS);
-    auto tp = ThreadPoolCreate(THREAD_NPROCS);
+    COUT("available threads: %d\n", hwConcurrency());
+    auto tp = ThreadPoolCreate(hwConcurrency());
     ThreadPoolStart(&tp);
 
     TaskNode j0 = {
@@ -132,6 +139,23 @@ main()
     ThreadPoolClean(&tp);
 
     COUT("\n");
+
+    auto hm = HashMapPCharCreate(ADT_DEFAULT_SIZE);
+    HashMapPCharInsert(&hm, "what");
+    HashMapPCharInsert(&hm, "is");
+    HashMapPCharInsert(&hm, "kekw");
+    HashMapPCharInsert(&hm, "the");
+    HashMapPCharInsert(&hm, "then");
+
+    auto pFound0 = HashMapPCharSearch(&hm, "what");
+    COUT("found: '%s', hash: '%zu'\n", pFound0.pNode ? pFound0.pNode->data : "(nill)", pFound0.hash);
+
+    auto pFound1 = HashMapPCharSearch(&hm, "kekw");
+    COUT("found: '%s', hash: '%zu'\n", pFound1.pNode ? pFound1.pNode->data : "(nill)", pFound1.hash);
+
+    printMap(&hm);
+
+    HashMapPCharClean(&hm);
 
     return 0;
 }

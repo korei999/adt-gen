@@ -6,7 +6,7 @@
 
 #ifdef __linux__
     #include <sys/sysinfo.h>
-    #define THREAD_NPROCS get_nprocs()
+    #define hwConcurrency() get_nprocs()
 #endif
 
 typedef struct TaskNode
@@ -78,11 +78,10 @@ threadLoop(void* pData)
 static inline void
 ThreadPoolSubmit(ThreadPool* self, TaskNode task)
 {
-    {
-        mtx_lock(&self->mtxQ);
-        TaskQPush(&self->qTasks, task);
-        mtx_unlock(&self->mtxQ);
-    }
+    mtx_lock(&self->mtxQ);
+    TaskQPush(&self->qTasks, task);
+    mtx_unlock(&self->mtxQ);
+
     cnd_signal(&self->cndQ);
 }
 
