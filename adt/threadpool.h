@@ -44,7 +44,7 @@ threadLoop(void* pData)
 
     while (!self->bDone)
     {
-        TaskNode j;
+        TaskNode task;
         {
             mtx_lock(&self->mtxQ);
 
@@ -57,17 +57,17 @@ threadLoop(void* pData)
                 return 0;
             }
 
-            j = *TaskQFirst(&self->qTasks);
+            task = *TaskQFirst(&self->qTasks);
             TaskQPop(&self->qTasks);
 
             mtx_unlock(&self->mtxQ);
         }
 
-        j.pFn(j.pArg);
+        task.pFn(task.pArg);
 
         /* no mutex lock so using `busy()` here */
         if (!ThreadPoolBusy(self))
-            cnd_signal(&self->cndWait);
+            cnd_signal(&self->cndWait); /* signal the `ThreadPoolWait()` */
     }
 
     return 0;
