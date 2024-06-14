@@ -20,6 +20,7 @@ QUEUE_GEN_CODE(TaskQ, TaskNode);
 typedef struct ThreadPool
 {
     atomic_bool bDone;
+    atomic_int activeTasks;
     thrd_t* aThreads;
     size_t nThreads;
     cnd_t cndQ, cndWait;
@@ -34,7 +35,7 @@ ThreadPoolBusy(ThreadPool* self)
     bool ret = self->qTasks.size > 0;
     mtx_unlock(&self->mtxQ);
 
-    return ret;
+    return ret || self->activeTasks > 0;
 }
 
 static inline int
@@ -57,17 +58,17 @@ threadLoop(void* pData)
                 return 0;
             }
 
-            task = *TaskQFirst(&self->qTasks);
-            TaskQPop(&self->qTasks);
+            task = *TaskQPop(&self->qTasks);
+            self->activeTasks++; /* increment before unlocking mtxQ to avoid 0 tasks and 0 q possibility */
 
             mtx_unlock(&self->mtxQ);
         }
 
         task.pFn(task.pArg);
+        self->activeTasks--;
 
-        /* no mutex lock so using `busy()` here */
         if (!ThreadPoolBusy(self))
-            cnd_signal(&self->cndWait); /* signal the `ThreadPoolWait()` */
+            cnd_signal(&self->cndWait); /* signal for the `ThreadPoolWait()` */
     }
 
     return 0;
@@ -88,6 +89,7 @@ ThreadPoolCreate(size_t nThreads)
 {
     ThreadPool tp;
     tp.bDone = false;
+    tp.activeTasks = 0;
     tp.aThreads = (thrd_t*)calloc(nThreads, sizeof(thrd_t));
     tp.nThreads = nThreads;
     cnd_init(&tp.cndQ);
@@ -121,7 +123,7 @@ ThreadPoolStart(ThreadPool* self)
 static inline void
 ThreadPoolWait(ThreadPool* self)
 {
-    if (ThreadPoolBusy(self))
+    while (ThreadPoolBusy(self))
     {
         mtx_lock(&self->mtxWait);
         cnd_wait(&self->cndWait, &self->mtxWait);

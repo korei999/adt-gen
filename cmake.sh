@@ -40,7 +40,7 @@ asan()
 
 build()
 {
-    cmake --build build/ -j
+    cmake --build build/ -j -v
 }
 
 run()

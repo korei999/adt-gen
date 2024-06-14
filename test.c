@@ -186,10 +186,10 @@ main()
     COUT("f1: '%s'\n", f1.pData ? *f1.pData : "(nill)");
     COUT("hm2.loadFactor: %lf\n", HashMap2PCharGetLoadFactor(&hm2));
 
-    /* doesn't actually removes but marks as unoccupied */
+    /* doesn't actually removes but marks as unoccupied and deleted */
     HashMap2PCharRemove(&hm2, f0.idx);
     COUT("f0: '%s'\n", f0.pData ? *f0.pData : "(nill)");
-    /* thus search will return nullptr */
+    /* but will still find if wasn't replaced */
     auto f2 = HashMap2PCharSearch(&hm2, *f0.pData);
     COUT("f2: '%s'\n", f2.pData ? *f2.pData : "(nill)");
 

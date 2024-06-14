@@ -10,6 +10,7 @@
     {                                                                                                                  \
         T data;                                                                                                        \
         bool bOccupied;                                                                                                \
+        bool bDeleted;                                                                                                 \
     } NAME##Bucket;                                                                                                    \
                                                                                                                        \
     typedef struct NAME                                                                                                \
@@ -73,6 +74,7 @@
         }                                                                                                              \
         self->pBuckets[idx].data = data;                                                                               \
         self->pBuckets[idx].bOccupied = true;                                                                          \
+        self->pBuckets[idx].bDeleted = false;                                                                          \
         self->bucketCount++;                                                                                           \
                                                                                                                        \
         return (NAME##ReturnNode) {.pData = &self->pBuckets[idx].data, .hash = hash, .idx = idx};                      \
@@ -87,7 +89,7 @@
         ret.hash = hash;                                                                                               \
         ret.pData = nullptr;                                                                                           \
                                                                                                                        \
-        while (self->pBuckets[idx].bOccupied)                                                                          \
+        while (self->pBuckets[idx].bOccupied || self->pBuckets[idx].bDeleted)                                          \
         {                                                                                                              \
             if (CMP(self->pBuckets[idx].data, data) == 0)                                                              \
             {                                                                                                          \
@@ -106,5 +108,6 @@
                                                                                                                        \
     [[maybe_unused]] static inline void NAME##Remove(NAME* self, size_t i)                                             \
     {                                                                                                                  \
+        self->pBuckets[i].bDeleted = true;                                                                             \
         self->pBuckets[i].bOccupied = false;                                                                           \
     }
