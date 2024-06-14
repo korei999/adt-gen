@@ -1,7 +1,8 @@
-#include "logs.h"
-#include "adt/hashmap.h"
-#include "adt/array.h"
-#include "adt/threadpool.h"
+#include "utils/adt/hashmap.h"
+#include "utils/adt/array.h"
+#include "utils/adt/threadpool.h"
+#include "utils/adt/hashmap2.h"
+#include "utils/logs.h"
 
 #include <string.h>
 #include <unistd.h>
@@ -16,6 +17,12 @@ hashFNV(const char* str)
     for (size_t i = 0; i < size; i++)
         hash = (hash ^ (size_t)str[i]) * 0x100000001B3;
     return hash;
+}
+
+static inline size_t
+hashInt(int num)
+{
+    return num;
 }
 
 static inline int
@@ -50,6 +57,9 @@ typedef IntList* pIntList;
 ARRAY_GEN_CODE(ArrayPIntList, pIntList);
 
 QUEUE_GEN_CODE(IntQ, int);
+
+HASHMAP2_GEN_CODE(HashMap2PChar, pChar, hashFNV, strcmp, ADT_HASHMAP2_DEFAULT_LOAD_FACTOR);
+HASHMAP2_GEN_CODE(HashMapInt, int, hashInt, intCmp, ADT_HASHMAP2_DEFAULT_LOAD_FACTOR);
 
 void
 printMap(const HashMapPChar* pMap)
@@ -162,6 +172,37 @@ main()
     printMap(&hm);
 
     HashMapPCharClean(&hm);
+
+    auto hm2 = HashMap2PCharCreate(16);
+
+    /* return nodes are invalidated if `Rehash()` has been called */
+    auto what = HashMap2PCharInsert(&hm2, "what");
+    auto what2 = HashMap2PCharInsert(&hm2, "what");
+    COUT("what : '%s', hash: %zu, i: %zu\n", *what.pData, what.hash, what.idx);
+    COUT("what2: '%s', hash: %zu, i: %zu\n", *what2.pData, what2.hash, what2.idx);
+    auto f0 = HashMap2PCharSearch(&hm2, "what");
+    COUT("f0: '%s'\n", *f0.pData);
+    auto f1 = HashMap2PCharSearch(&hm2, "kekw");
+    COUT("f1: '%s'\n", f1.pData ? *f1.pData : "(nill)");
+    COUT("hm2.loadFactor: %lf\n", HashMap2PCharGetLoadFactor(&hm2));
+
+    /* doesn't actually removes but marks as unoccupied */
+    HashMap2PCharRemove(&hm2, f0.idx);
+    COUT("f0: '%s'\n", f0.pData ? *f0.pData : "(nill)");
+    /* thus search will return nullptr */
+    auto f2 = HashMap2PCharSearch(&hm2, *f0.pData);
+    COUT("f2: '%s'\n", f2.pData ? *f2.pData : "(nill)");
+
+    HashMap2PCharClean(&hm2);
+
+    auto hm3 = HashMapIntCreate(ADT_DEFAULT_SIZE);
+
+    HashMapIntInsert(&hm3, 2);
+    HashMapIntInsert(&hm3, 3);
+    auto f3_0 = HashMapIntSearch(&hm3, 3);
+    COUT("f3_0: '%d'\n", f3_0.pData ? *f3_0.pData : 0);
+
+    HashMapIntClean(&hm3);
 
     return 0;
 }

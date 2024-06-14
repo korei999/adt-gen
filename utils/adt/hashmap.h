@@ -30,7 +30,7 @@
         return (NAME) {.pBuckets = (LIST*)calloc(cap, sizeof(LIST)), .bucketCount = 0, .capacity = cap};               \
     }                                                                                                                  \
                                                                                                                        \
-    [[maybe_unused]] static inline void NAME##Clean(NAME* restrict self)                                               \
+    [[maybe_unused]] static inline void NAME##Clean(NAME* self)                                                        \
     {                                                                                                                  \
         for (size_t i = 0; i < self->capacity; i++)                                                                    \
             LIST##Clean(&self->pBuckets[i]);                                                                           \
@@ -42,7 +42,7 @@
         return ((double)self->entryCount / (double)self->bucketCount);                                                 \
     }                                                                                                                  \
                                                                                                                        \
-    [[maybe_unused]] static inline void NAME##Rehash(NAME* restrict self, size_t cap)                                  \
+    [[maybe_unused]] static inline void NAME##Rehash(NAME* self, size_t cap)                                           \
     {                                                                                                                  \
         NAME newMap = NAME##Create(cap);                                                                               \
                                                                                                                        \
@@ -67,7 +67,7 @@
         return LIST##PushBack(&self->pBuckets[hash], value);                                                           \
     }                                                                                                                  \
                                                                                                                        \
-    [[maybe_unused]] static inline NAME##ReturnNode NAME##Search(NAME* restrict self, T value)                         \
+    [[maybe_unused]] static inline NAME##ReturnNode NAME##Search(NAME* self, T value)                                  \
     {                                                                                                                  \
         size_t hash = FNHASH(value) % self->capacity;                                                                  \
         LIST##Node* pNode = LIST##Search(&self->pBuckets[hash], value);                                                \
