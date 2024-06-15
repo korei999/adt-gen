@@ -14,7 +14,7 @@ HASHMAP_LP_GEN_CODE(HashMapStrFNV, pChar, hashFNV, strcmp, ADT_HASHMAP_LP_DEFAUL
 ARRAY_GEN_CODE(ArrayStr, pChar);
 
 #define SIZE 10000
-#define MAX_STRING_SIZE 10
+#define MAX_STRING_SIZE 20
 
 typedef struct Arg0
 {
