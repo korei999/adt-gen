@@ -1,13 +1,10 @@
 #include "utils/adt/array.h"
-#include "utils/adt/hashmap.h"
-#include "utils/adt/hashmaplp.h"
-#include "utils/adt/threadpool.h"
+#include "utils/adt/hashmapChained.h"
 #include "utils/logs.h"
 #include "utils/misc.h"
-#include "utils/time.h"
 
 typedef char* pChar;
-HASHMAP_GEN_CODE(BorkedMap, ListStr, pChar, hashMurmurOAAT64, strcmp, ADT_HASHMAP_DEFAULT_LOAD_FACTOR);
+HASHMAP_CHAINED_GEN_CODE(BorkedMap, ListStr, pChar, hashMurmurOAAT64, strcmp, ADT_HASHMAP_CHAINED_DEFAULT_LOAD_FACTOR);
 ARRAY_GEN_CODE(ArrayStr, pChar);
 
 #define SIZE 10

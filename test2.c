@@ -1,16 +1,16 @@
 #include "utils/adt/array.h"
 #include "utils/adt/hashmap.h"
-#include "utils/adt/hashmaplp.h"
+#include "utils/adt/hashmapChained.h"
 #include "utils/adt/threadpool.h"
 #include "utils/logs.h"
 #include "utils/misc.h"
 #include "utils/time.h"
 
 typedef char* pChar;
-HASHMAP_GEN_CODE(HashMapChStr, ListStr, pChar, hashMurmurOAAT64, strcmp, ADT_HASHMAP_DEFAULT_LOAD_FACTOR);
-HASHMAP_GEN_CODE(HashMapChStrFNV, ListStrFNV, pChar, hashFNV, strcmp, ADT_HASHMAP_DEFAULT_LOAD_FACTOR);
-HASHMAP_LP_GEN_CODE(HashMapStr, pChar, hashMurmurOAAT64, strcmp, ADT_HASHMAP_LP_DEFAULT_LOAD_FACTOR);
-HASHMAP_LP_GEN_CODE(HashMapStrFNV, pChar, hashFNV, strcmp, ADT_HASHMAP_LP_DEFAULT_LOAD_FACTOR);
+HASHMAP_CHAINED_GEN_CODE(HashMapChStr, ListStr, pChar, hashMurmurOAAT64, strcmp, ADT_HASHMAP_CHAINED_DEFAULT_LOAD_FACTOR);
+HASHMAP_CHAINED_GEN_CODE(HashMapChStrFNV, ListStrFNV, pChar, hashFNV, strcmp, ADT_HASHMAP_CHAINED_DEFAULT_LOAD_FACTOR);
+HASHMAP_GEN_CODE(HashMapStr, pChar, hashMurmurOAAT64, strcmp, ADT_HASHMAP_DEFAULT_LOAD_FACTOR);
+HASHMAP_GEN_CODE(HashMapStrFNV, pChar, hashFNV, strcmp, ADT_HASHMAP_DEFAULT_LOAD_FACTOR);
 ARRAY_GEN_CODE(ArrayStr, pChar);
 
 #define SIZE 10000
@@ -220,10 +220,10 @@ main()
 
     ThreadPoolWait(&tp);
 
-    COUT("hm0(chaining MURMUR) spent searching: %lf ms, loadFactor: %lf, cap: %zu\n", tCh, HashMapChStrGetLoadFactor(&hm0), hm0.capacity);
-    COUT("hm1(linear probing MURMUR) spent searching: %lf ms, loadFactor: %lf, cap: %zu\n", tLin, HashMapStrGetLoadFactor(&hm1), hm1.capacity);
-    COUT("hm2(chaining FNV) spent searching: %lf ms, loadFactor: %lf, cap: %zu\n", tChFNV, HashMapChStrFNVGetLoadFactor(&hm2), hm2.capacity);
-    COUT("hm3(linear probing FNV) spent searching: %lf ms, loadFactor: %lf, cap: %zu\n", tLinFNV, HashMapStrFNVGetLoadFactor(&hm3), hm3.capacity);
+    COUT("hm0(chaining MURMUR) spent searching: %lf ms, loadFactor: %lf, cap: %zu\n", tCh, HashMapChStrLoadFactor(&hm0), hm0.capacity);
+    COUT("hm1(linear probing MURMUR) spent searching: %lf ms, loadFactor: %lf, cap: %zu\n", tLin, HashMapStrLoadFactor(&hm1), hm1.capacity);
+    COUT("hm2(chaining FNV) spent searching: %lf ms, loadFactor: %lf, cap: %zu\n", tChFNV, HashMapChStrFNVLoadFactor(&hm2), hm2.capacity);
+    COUT("hm3(linear probing FNV) spent searching: %lf ms, loadFactor: %lf, cap: %zu\n", tLinFNV, HashMapStrFNVLoadFactor(&hm3), hm3.capacity);
 
     HashMapChStrClean(&hm0);
     HashMapStrClean(&hm1);

@@ -1,6 +1,6 @@
 #include "utils/adt/array.h"
 #include "utils/adt/hashmap.h"
-#include "utils/adt/hashmaplp.h"
+#include "utils/adt/hashmapChained.h"
 #include "utils/adt/threadpool.h"
 #include "utils/logs.h"
 
@@ -49,7 +49,7 @@ randomString(char* dest, size_t length)
 
 typedef char* pChar;
 
-HASHMAP_GEN_CODE(HashMapPChar, ListPChar, pChar, hashFNV, strcmp, ADT_HASHMAP_DEFAULT_LOAD_FACTOR);
+HASHMAP_CHAINED_GEN_CODE(HashMapPChar, ListPChar, pChar, hashFNV, strcmp, ADT_HASHMAP_CHAINED_DEFAULT_LOAD_FACTOR);
 ARRAY_GEN_CODE(ArrayPChar, pChar);
 LIST_GEN_CODE(IntList, int, intCmp);
 
@@ -58,8 +58,8 @@ ARRAY_GEN_CODE(ArrayPIntList, pIntList);
 
 QUEUE_GEN_CODE(IntQ, int);
 
-HASHMAP_LP_GEN_CODE(HashMap2PChar, pChar, hashFNV, strcmp, ADT_HASHMAP_LP_DEFAULT_LOAD_FACTOR);
-HASHMAP_LP_GEN_CODE(HashMapInt, int, hashInt, intCmp, ADT_HASHMAP_LP_DEFAULT_LOAD_FACTOR);
+HASHMAP_GEN_CODE(HashMap2PChar, pChar, hashFNV, strcmp, ADT_HASHMAP_DEFAULT_LOAD_FACTOR);
+HASHMAP_GEN_CODE(HashMapInt, int, hashInt, intCmp, ADT_HASHMAP_DEFAULT_LOAD_FACTOR);
 
 void
 printMap(const HashMapPChar* pMap)
@@ -184,7 +184,7 @@ main()
     COUT("f0: '%s'\n", *f0.pData);
     auto f1 = HashMap2PCharSearch(&hm2, "kekw");
     COUT("f1: '%s'\n", f1.pData ? *f1.pData : "(nill)");
-    COUT("hm2.loadFactor: %lf\n", HashMap2PCharGetLoadFactor(&hm2));
+    COUT("hm2.loadFactor: %lf\n", HashMap2PCharLoadFactor(&hm2));
 
     /* doesn't actually removes but marks as unoccupied and deleted */
     HashMap2PCharRemove(&hm2, f0.idx);
