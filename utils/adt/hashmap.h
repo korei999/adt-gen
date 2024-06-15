@@ -39,7 +39,7 @@
                                                                                                                        \
     [[maybe_unused]] static inline double NAME##GetLoadFactor(NAME* self)                                              \
     {                                                                                                                  \
-        return ((double)self->entryCount / (double)self->bucketCount);                                                    \
+        return ((double)self->entryCount / (double)self->bucketCount);                                                 \
     }                                                                                                                  \
                                                                                                                        \
     [[maybe_unused]] static inline void NAME##Rehash(NAME* self, size_t cap)                                           \
