@@ -19,7 +19,7 @@ QUEUE_GEN_CODE(TaskQ, TaskNode);
 
 typedef struct ThreadPool
 {
-    atomic_bool bDone;
+    bool bDone;
     atomic_int activeTasks;
     thrd_t* aThreads;
     size_t nThreads;
