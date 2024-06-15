@@ -1,6 +1,6 @@
 #include "utils/adt/array.h"
 #include "utils/adt/hashmap.h"
-#include "utils/adt/hashmap2.h"
+#include "utils/adt/hashmaplp.h"
 #include "utils/adt/threadpool.h"
 #include "utils/logs.h"
 
@@ -58,8 +58,8 @@ ARRAY_GEN_CODE(ArrayPIntList, pIntList);
 
 QUEUE_GEN_CODE(IntQ, int);
 
-HASHMAP2_GEN_CODE(HashMap2PChar, pChar, hashFNV, strcmp, ADT_HASHMAP2_DEFAULT_LOAD_FACTOR);
-HASHMAP2_GEN_CODE(HashMapInt, int, hashInt, intCmp, ADT_HASHMAP2_DEFAULT_LOAD_FACTOR);
+HASHMAP_LP_GEN_CODE(HashMap2PChar, pChar, hashFNV, strcmp, ADT_HASHMAP_LP_DEFAULT_LOAD_FACTOR);
+HASHMAP_LP_GEN_CODE(HashMapInt, int, hashInt, intCmp, ADT_HASHMAP_LP_DEFAULT_LOAD_FACTOR);
 
 void
 printMap(const HashMapPChar* pMap)
