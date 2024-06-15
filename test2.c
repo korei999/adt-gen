@@ -1,6 +1,6 @@
 #include "utils/adt/array.h"
 #include "utils/adt/hashmap.h"
-#include "utils/adt/hashmap2.h"
+#include "utils/adt/hashmaplp.h"
 #include "utils/adt/threadpool.h"
 #include "utils/logs.h"
 #include "utils/misc.h"
@@ -27,8 +27,8 @@ randomString(size_t length)
 typedef char* pChar;
 HASHMAP_GEN_CODE(HashMapChStr, ListStr, pChar, hashMurmurOAAT64, strcmp, ADT_HASHMAP_DEFAULT_LOAD_FACTOR);
 HASHMAP_GEN_CODE(HashMapChStrFNV, ListStrFNV, pChar, hashFNV, strcmp, ADT_HASHMAP_DEFAULT_LOAD_FACTOR);
-HASHMAP2_GEN_CODE(HashMapStr, pChar, hashMurmurOAAT64, strcmp, ADT_HASHMAP2_DEFAULT_LOAD_FACTOR);
-HASHMAP2_GEN_CODE(HashMapStrFNV, pChar, hashFNV, strcmp, ADT_HASHMAP2_DEFAULT_LOAD_FACTOR);
+HASHMAP_LP_GEN_CODE(HashMapStr, pChar, hashMurmurOAAT64, strcmp, ADT_HASHMAP_LP_DEFAULT_LOAD_FACTOR);
+HASHMAP_LP_GEN_CODE(HashMapStrFNV, pChar, hashFNV, strcmp, ADT_HASHMAP_LP_DEFAULT_LOAD_FACTOR);
 ARRAY_GEN_CODE(ArrayStr, pChar);
 
 #define SIZE 10000

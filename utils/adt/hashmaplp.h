@@ -3,9 +3,9 @@
 
 /* Hash map with linear probing */
 
-#define ADT_HASHMAP2_DEFAULT_LOAD_FACTOR 0.5
+#define ADT_HASHMAP_LP_DEFAULT_LOAD_FACTOR 0.5
 
-#define HASHMAP2_GEN_CODE(NAME, T, FNHASH, CMP, LOAD_FACTOR)                                                           \
+#define HASHMAP_LP_GEN_CODE(NAME, T, FNHASH, CMP, LOAD_FACTOR)                                                         \
     typedef struct NAME##Bucket                                                                                        \
     {                                                                                                                  \
         T data;                                                                                                        \
