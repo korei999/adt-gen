@@ -2,6 +2,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 #define LENGTH(A) (sizeof(A) / sizeof(A[0]))
 
@@ -58,4 +59,14 @@ randomString(size_t length)
     }
 
     return ret;
+}
+
+static inline double
+msTimeNow()
+{
+    struct timespec ts;
+    clock_gettime(CLOCK_MONOTONIC, &ts);
+    time_t micros = ts.tv_sec * 1000000000;
+    micros += ts.tv_nsec;
+    return micros / 1000000.0;
 }

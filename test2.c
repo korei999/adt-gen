@@ -4,7 +4,7 @@
 #include "utils/adt/threadpool.h"
 #include "utils/logs.h"
 #include "utils/misc.h"
-#include "utils/time.h"
+#include "ultratypes.h"
 
 typedef char* pChar;
 HASHMAP_CHAINED_GEN_CODE(HashMapChStr, ListStr, pChar, hashMurmurOAAT64, strcmp, ADT_HASHMAP_CHAINED_DEFAULT_LOAD_FACTOR);
