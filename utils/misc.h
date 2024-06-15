@@ -1,5 +1,6 @@
 #pragma once
 
+#include <stdlib.h>
 #include <string.h>
 
 #define LENGTH(A) (sizeof(A) / sizeof(A[0]))
@@ -39,4 +40,22 @@ intCmp(int a, int b)
     if (a > b) return 1;
     else if (a < b) return -1;
     else return 0;
+}
+
+static inline char*
+randomString(size_t length)
+{
+    const char charset[] = "0123456789"
+                           "abcdefghijklmnopqrstuvwxyz"
+                           "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+    char* ret = calloc(length, sizeof(char));
+
+    for (size_t i = 0; i < length - 1; i++)
+    {
+        size_t idx = rand() % (LENGTH(charset) - 1);
+        ret[i] = charset[idx];
+    }
+
+    return ret;
 }

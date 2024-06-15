@@ -151,7 +151,7 @@ main()
 
     COUT("\n");
 
-    auto hm = HashMapPCharCreate(ADT_DEFAULT_SIZE);
+    auto hm = HashMapPCharCreate(1);
     HashMapPCharInsert(&hm, "what");
     HashMapPCharInsert(&hm, "is");
     HashMapPCharInsert(&hm, "kekw");

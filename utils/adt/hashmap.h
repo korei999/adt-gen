@@ -39,7 +39,7 @@
                                                                                                                        \
     [[maybe_unused]] static inline double NAME##GetLoadFactor(NAME* self)                                              \
     {                                                                                                                  \
-        return ((double)self->entryCount / (double)self->bucketCount);                                                 \
+        return ((double)self->entryCount / (double)self->bucketCount);                                                    \
     }                                                                                                                  \
                                                                                                                        \
     [[maybe_unused]] static inline void NAME##Rehash(NAME* self, size_t cap)                                           \
@@ -47,8 +47,9 @@
         NAME newMap = NAME##Create(cap);                                                                               \
                                                                                                                        \
         for (size_t i = 0; i < self->capacity; i++)                                                                    \
-            for (LIST##Node* it = self->pBuckets[i].pFirst; it; it = it->pNext)                                        \
-                NAME##Insert(&newMap, it->data);                                                                       \
+            if (self->pBuckets[i].pFirst)                                                                              \
+                for (LIST##Node* it = self->pBuckets[i].pFirst; it; it = it->pNext)                                    \
+                    NAME##Insert(&newMap, it->data);                                                                   \
                                                                                                                        \
         NAME##Clean(self);                                                                                             \
         *self = newMap;                                                                                                \
@@ -56,9 +57,10 @@
                                                                                                                        \
     [[maybe_unused]] static inline LIST##Node* NAME##Insert(NAME* self, T value)                                       \
     {                                                                                                                  \
-        size_t hash = FNHASH(value) % self->capacity;                                                                  \
         if (NAME##GetLoadFactor(self) >= LOAD_FACTOR)                                                                  \
             NAME##Rehash(self, self->capacity * 2);                                                                    \
+                                                                                                                       \
+        size_t hash = FNHASH(value) % self->capacity;                                                                  \
                                                                                                                        \
         if (!self->pBuckets[hash].pFirst)                                                                              \
             self->bucketCount++;                                                                                       \
@@ -71,9 +73,8 @@
     {                                                                                                                  \
         size_t hash = FNHASH(value) % self->capacity;                                                                  \
         LIST##Node* pNode = LIST##Search(&self->pBuckets[hash], value);                                                \
-        bool bInserted = pNode ? true : false;                                                                         \
                                                                                                                        \
-        return (NAME##ReturnNode) {.pNode = pNode, .hash = hash, .bInserted = bInserted};                              \
+        return (NAME##ReturnNode) {.pNode = pNode, .hash = hash, .bInserted = false};                                  \
     }                                                                                                                  \
                                                                                                                        \
     [[maybe_unused]] static inline NAME##ReturnNode NAME##TryInsert(NAME* self, T value)                               \

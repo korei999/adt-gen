@@ -6,24 +6,6 @@
 #include "utils/misc.h"
 #include "utils/time.h"
 
-static inline char*
-randomString(size_t length)
-{
-    const char charset[] = "0123456789"
-                           "abcdefghijklmnopqrstuvwxyz"
-                           "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-
-    char* ret = calloc(length, sizeof(char));
-
-    for (size_t i = 0; i < length - 1; i++)
-    {
-        size_t idx = rand() % (LENGTH(charset) - 1);
-        ret[i] = charset[idx];
-    }
-
-    return ret;
-}
-
 typedef char* pChar;
 HASHMAP_GEN_CODE(HashMapChStr, ListStr, pChar, hashMurmurOAAT64, strcmp, ADT_HASHMAP_DEFAULT_LOAD_FACTOR);
 HASHMAP_GEN_CODE(HashMapChStrFNV, ListStrFNV, pChar, hashFNV, strcmp, ADT_HASHMAP_DEFAULT_LOAD_FACTOR);
@@ -32,6 +14,7 @@ HASHMAP_LP_GEN_CODE(HashMapStrFNV, pChar, hashFNV, strcmp, ADT_HASHMAP_LP_DEFAUL
 ARRAY_GEN_CODE(ArrayStr, pChar);
 
 #define SIZE 10000
+#define MAX_STRING_SIZE 10
 
 typedef struct Arg0
 {
@@ -64,17 +47,17 @@ typedef struct Arg3
 int
 task0(void* data)
 {
-    Arg0* pA = data;
+    Arg0 pA = *(Arg0*)data;
 
     f64 t0 = msTimeNow();
     for (size_t i = 0; i < SIZE; i++)
     {
-        for (size_t i = 0; i < pA->pArr->size; i++)
+        for (size_t i = 0; i < pA.pArr->size; i++)
         {
-            auto p = HashMapChStrSearch(pA->pMap, pA->pArr->pData[i]);
-            if (!p.pNode || strcmp(p.pNode->data, pA->pArr->pData[i]) != 0)
+            auto p = HashMapChStrSearch(pA.pMap, pA.pArr->pData[i]);
+            if (!p.pNode || strcmp(p.pNode->data, pA.pArr->pData[i]) != 0)
             {
-                LOG_WARN("task0 failed\n");
+                LOG_WARN("task0(CH) failed: %s, %s\n", !p.pNode ? "(nill)" : p.pNode->data, pA.pArr->pData[i]);
                 goto done;
             }
         }
@@ -84,7 +67,7 @@ done:
     f64 t1 = msTimeNow();
     f64 tChained = t1 - t0;
 
-    *pA->pTime = tChained;
+    *pA.pTime = tChained;
 
     COUT("task0 done\n");
     return 0;
@@ -93,15 +76,15 @@ done:
 int
 task1(void* data)
 {
-    Arg1* pA = data;
+    Arg1 pA = *(Arg1*)data;
 
     f64 t0 = msTimeNow();
     for (size_t i = 0; i < SIZE; i++)
     {
-        for (size_t i = 0; i < pA->pArr->size; i++)
+        for (size_t i = 0; i < pA.pArr->size; i++)
         {
-            auto p = HashMapStrSearch(pA->pMap, pA->pArr->pData[i]);
-            if (!p.pData || strcmp(*p.pData, pA->pArr->pData[i]) != 0)
+            auto p = HashMapStrSearch(pA.pMap, pA.pArr->pData[i]);
+            if (!p.pData || strcmp(*p.pData, pA.pArr->pData[i]) != 0)
             {
                 LOG_WARN("task1 failed\n");
                 goto done;
@@ -113,7 +96,7 @@ done:
     f64 t1 = msTimeNow();
     f64 tLinear = t1 - t0;
 
-    *pA->pTime = tLinear;
+    *pA.pTime = tLinear;
 
     COUT("task1 done\n");
     return 0;
@@ -122,17 +105,17 @@ done:
 int
 task2(void* data)
 {
-    Arg2* pA = data;
+    Arg2 pA = *(Arg2*)data;
 
     f64 t0 = msTimeNow();
     for (size_t i = 0; i < SIZE; i++)
     {
-        for (size_t i = 0; i < pA->pArr->size; i++)
+        for (size_t i = 0; i < pA.pArr->size; i++)
         {
-            auto p = HashMapChStrFNVSearch(pA->pMap, pA->pArr->pData[i]);
-            if (!p.pNode || strcmp(p.pNode->data, pA->pArr->pData[i]) != 0)
+            auto p = HashMapChStrFNVSearch(pA.pMap, pA.pArr->pData[i]);
+            if (!p.pNode || strcmp(p.pNode->data, pA.pArr->pData[i]) != 0)
             {
-                LOG_WARN("task2 failed\n");
+                LOG_WARN("task2(CH) failed: %s, %s\n", !p.pNode ? "(nill)" : p.pNode->data, pA.pArr->pData[i]);
                 goto done;
             }
         }
@@ -142,7 +125,7 @@ done:
     f64 t1 = msTimeNow();
     f64 tLinear = t1 - t0;
 
-    *pA->pTime = tLinear;
+    *pA.pTime = tLinear;
 
     COUT("task2 done\n");
     return 0;
@@ -151,15 +134,15 @@ done:
 int
 task3(void* data)
 {
-    Arg3* pA = data;
+    Arg3 pA = *(Arg3*)data;
 
     f64 t0 = msTimeNow();
     for (size_t i = 0; i < SIZE; i++)
     {
-        for (size_t i = 0; i < pA->pArr->size; i++)
+        for (size_t i = 0; i < pA.pArr->size; i++)
         {
-            auto p = HashMapStrFNVSearch(pA->pMap, pA->pArr->pData[i]);
-            if (!p.pData || strcmp(*p.pData, pA->pArr->pData[i]) != 0)
+            auto p = HashMapStrFNVSearch(pA.pMap, pA.pArr->pData[i]);
+            if (!p.pData || strcmp(*p.pData, pA.pArr->pData[i]) != 0)
             {
                 LOG_WARN("task3 failed\n");
                 goto done;
@@ -171,7 +154,7 @@ done:
     f64 t1 = msTimeNow();
     f64 tLinear = t1 - t0;
 
-    *pA->pTime = tLinear;
+    *pA.pTime = tLinear;
 
     COUT("task3 done\n");
     return 0;
@@ -180,17 +163,19 @@ done:
 int
 main()
 {
-    auto hm0 = HashMapChStrCreate(SIZE * 3);
+    srand(time(NULL));
+
+    auto hm0 = HashMapChStrCreate(ADT_DEFAULT_SIZE);
+    auto hm1 = HashMapStrCreate(ADT_DEFAULT_SIZE);
+    auto hm2 = HashMapChStrFNVCreate(ADT_DEFAULT_SIZE);
+    auto hm3 = HashMapStrFNVCreate(ADT_DEFAULT_SIZE);
     COUT("hm0.capacity: %zu\n", hm0.capacity);
-    auto hm1 = HashMapStrCreate(SIZE * 3);
-    auto hm2 = HashMapChStrFNVCreate(SIZE * 3);
-    auto hm3 = HashMapStrFNVCreate(SIZE * 3);
 
     auto aClean = ArrayStrCreate(SIZE);
 
     for (size_t i = 0; i < SIZE; i++)
     {
-        char* rStr = randomString((rand() % 15) + 2);
+        char* rStr = randomString((rand() % (MAX_STRING_SIZE - 3)) + 3);
         ArrayStrPush(&aClean, rStr);
 
         HashMapChStrInsert(&hm0, rStr);
@@ -235,26 +220,25 @@ main()
 
     ThreadPoolWait(&tp);
 
-    COUT("hm0(chaining MURMUR) spent searching: %lf ms\n", tCh);
-    COUT("hm0.loadFactor: %lf\n", HashMapChStrGetLoadFactor(&hm0));
-
-    COUT("hm1(linear probing MURMUR) spent searching: %lf ms\n", tLin);
-    COUT("hm1.loadFactor: %lf\n", HashMapStrGetLoadFactor(&hm1));
-
-    COUT("hm2(chaining FNV) spent searching: %lf ms\n", tChFNV);
-    COUT("hm2.loadFactor: %lf\n", HashMapChStrFNVGetLoadFactor(&hm2));
-
-    COUT("hm3(linear probing FNV) spent searching: %lf ms\n", tLinFNV);
-    COUT("hm3.loadFactor: %lf\n", HashMapStrFNVGetLoadFactor(&hm3));
+    COUT("hm0(chaining MURMUR) spent searching: %lf ms, loadFactor: %lf, cap: %zu\n", tCh, HashMapChStrGetLoadFactor(&hm0), hm0.capacity);
+    COUT("hm1(linear probing MURMUR) spent searching: %lf ms, loadFactor: %lf, cap: %zu\n", tLin, HashMapStrGetLoadFactor(&hm1), hm1.capacity);
+    COUT("hm2(chaining FNV) spent searching: %lf ms, loadFactor: %lf, cap: %zu\n", tChFNV, HashMapChStrFNVGetLoadFactor(&hm2), hm2.capacity);
+    COUT("hm3(linear probing FNV) spent searching: %lf ms, loadFactor: %lf, cap: %zu\n", tLinFNV, HashMapStrFNVGetLoadFactor(&hm3), hm3.capacity);
 
     HashMapChStrClean(&hm0);
     HashMapStrClean(&hm1);
     HashMapChStrFNVClean(&hm2);
     HashMapStrFNVClean(&hm3);
 
+    auto lL = ListStrCreate();
+
+    for (size_t i = 0; i < aClean.size; i++)
+        ListStrPushBack(&lL, aClean.pData[i]);
+
     for (size_t i = 0; i < aClean.size; i++)
         free(aClean.pData[i]);
 
+    ListStrClean(&lL);
     ArrayStrClean(&aClean);
 
     ThreadPoolStop(&tp);
