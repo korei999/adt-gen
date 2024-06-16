@@ -1,4 +1,5 @@
 #include "utils/adt/array.h"
+#include "utils/adt/queue.h"
 #include "utils/adt/hashmapChained.h"
 #include "utils/logs.h"
 #include "utils/misc.h"
@@ -6,6 +7,7 @@
 typedef char* pChar;
 HASHMAP_CHAINED_GEN_CODE(BorkedMap, ListStr, pChar, hashMurmurOAAT64, strcmp, ADT_HASHMAP_CHAINED_DEFAULT_LOAD_FACTOR);
 ARRAY_GEN_CODE(ArrayStr, pChar);
+QUEUE_GEN_CODE(IntQ, int);
 
 #define SIZE 10
 
@@ -55,14 +57,32 @@ main()
     auto PYIiqXyDCU = BorkedMapSearch(&m0, "PYIiqXyDCU");
     COUT("PYIiqXyDCU '%s'\n", PYIiqXyDCU.pNode ? "found" : "not found");
 
-    auto fl = ListStrSearch(&m0.pBuckets[3], "Y");
-    COUT("Y from list '%s': '%s'\n", fl ? "found" : "not found", fl ? fl->data : "(nill)");
-
-
     printMap(&m0);
 
     for (size_t i = 0; i < SIZE; i++)
         free(aC.pData[i]);
     ArrayStrClean(&aC);
     BorkedMapClean(&m0);
+
+    auto q = IntQCreate(4);
+    IntQPush(&q, 1);
+    IntQPush(&q, 2);
+    IntQPush(&q, 3);
+    IntQPush(&q, 4);
+    IntQPush(&q, 5);
+    IntQPush(&q, 6);
+
+    for (long i = 0; i < q.capacity; i++)
+        COUT("%ld: %d\n", i, q.pData[i]);
+    COUT("\n");
+
+    QUEUE_FOREACH_I(&q, i)
+        COUT("%ld: %d\n", i, q.pData[i]);
+    COUT("\n");
+
+    QUEUE_FOREACH_I_REV(&q, i)
+        COUT("%ld: %d\n", i, q.pData[i]);
+    COUT("\n");
+
+    IntQClean(&q);
 }

@@ -1,6 +1,13 @@
 #pragma once
 #include "common.h"
 
+#define QUEUE_FIRST_I(Q) ((Q)->first)
+#define QUEUE_LAST_I(Q) (((Q)->size == 0) ? 0 : ((Q)->last - 1))
+#define QUEUE_NEXT_I(Q, I) (((I) + 1) >= (Q)->capacity ? 0 : ((I) + 1))
+#define QUEUE_PREV_I(Q, I) (((I) - 1) < 0 ? ((Q)->capacity - 1) : ((I) - 1))
+#define QUEUE_FOREACH_I(Q, I) for (long I = QUEUE_FIRST_I(Q), t = 0; t < (Q)->size; I = QUEUE_NEXT_I(Q, I), t++)
+#define QUEUE_FOREACH_I_REV(Q, I) for (long I = QUEUE_LAST_I(Q), t = 0; t < (Q)->size; I = QUEUE_PREV_I(Q, I), t++)
+
 #define QUEUE_GEN_CODE(NAME, T)                                                                                        \
     typedef struct NAME                                                                                                \
     {                                                                                                                  \
@@ -24,35 +31,6 @@
         free(self->pData);                                                                                             \
     }                                                                                                                  \
                                                                                                                        \
-    [[maybe_unused]] static inline long NAME##FirstI(NAME* self)                                                       \
-    {                                                                                                                  \
-        return self->first;                                                                                            \
-    }                                                                                                                  \
-                                                                                                                       \
-    [[maybe_unused]] static inline long NAME##LastI(NAME* self)                                                        \
-    {                                                                                                                  \
-        if (self->size == 0)                                                                                           \
-            return 0;                                                                                                  \
-        else                                                                                                           \
-            return self->last - 1;                                                                                     \
-    }                                                                                                                  \
-                                                                                                                       \
-    [[maybe_unused]] static inline long NAME##NextI(NAME* self, long i)                                                \
-    {                                                                                                                  \
-        long next = 1 + i;                                                                                             \
-        if (next >= self->capacity)                                                                                    \
-            next = 0;                                                                                                  \
-        return next;                                                                                                   \
-    }                                                                                                                  \
-                                                                                                                       \
-    [[maybe_unused]] static inline long NAME##PrevI(NAME* self, long i)                                                \
-    {                                                                                                                  \
-        long prev = i - 1;                                                                                             \
-        if (prev < 0)                                                                                                  \
-            prev = self->capacity - 1;                                                                                 \
-        return prev;                                                                                                   \
-    }                                                                                                                  \
-                                                                                                                       \
     [[maybe_unused]] static inline T* NAME##First(NAME* self)                                                          \
     {                                                                                                                  \
         assert(self->size > 0);                                                                                        \
@@ -62,15 +40,17 @@
     [[maybe_unused]] static inline T* NAME##Last(NAME* self)                                                           \
     {                                                                                                                  \
         assert(self->size > 0);                                                                                        \
-        return &self->pData[self->last];                                                                               \
+        return &self->pData[QUEUE_LAST_I(self)];                                                                       \
     }                                                                                                                  \
                                                                                                                        \
     [[maybe_unused]] static inline void NAME##Resize(NAME* self, size_t size)                                          \
     {                                                                                                                  \
         NAME qNew = NAME##Create(size);                                                                                \
                                                                                                                        \
-        for (long i = self->first, t = 0; t < self->size; i = NAME##NextI(self, i), t++)                               \
+        QUEUE_FOREACH_I(self, i)                                                                                       \
+        {                                                                                                              \
             NAME##Push(&qNew, self->pData[i]);                                                                         \
+        }                                                                                                              \
                                                                                                                        \
         NAME##Clean(self);                                                                                             \
         *self = qNew;                                                                                                  \
@@ -82,7 +62,7 @@
             NAME##Resize(self, self->capacity * 2);                                                                    \
                                                                                                                        \
         long i = self->last;                                                                                           \
-        long ni = NAME##NextI(self, i);                                                                                \
+        long ni = QUEUE_NEXT_I(self, i);                                                                               \
         self->pData[i] = data;                                                                                         \
         self->last = ni;                                                                                               \
         self->size++;                                                                                                  \
@@ -92,7 +72,7 @@
     {                                                                                                                  \
         assert(self->size > 0);                                                                                        \
         T* ret = &self->pData[self->first];                                                                            \
-        self->first = NAME##NextI(self, self->first);                                                                  \
+        self->first = QUEUE_NEXT_I(self, self->first);                                                                 \
         self->size--;                                                                                                  \
         return ret;                                                                                                    \
     }

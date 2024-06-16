@@ -13,7 +13,7 @@ HASHMAP_GEN_CODE(HashMapStr, pChar, hashMurmurOAAT64, strcmp, ADT_HASHMAP_DEFAUL
 HASHMAP_GEN_CODE(HashMapStrFNV, pChar, hashFNV, strcmp, ADT_HASHMAP_DEFAULT_LOAD_FACTOR);
 ARRAY_GEN_CODE(ArrayStr, pChar);
 
-#define SIZE 10000
+#define SIZE 5000
 #define MAX_STRING_SIZE 20
 
 typedef struct Arg0

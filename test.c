@@ -119,7 +119,7 @@ main()
     IntQPop(&q);
     IntQPop(&q);
 
-    for (long i = IntQFirstI(&q), t = 0; t < q.size; i = IntQNextI(&q, i), t++)
+    QUEUE_FOREACH_I(&q, i)
         COUT("'%d', ", q.pData[i]);
     COUT("\n");
 

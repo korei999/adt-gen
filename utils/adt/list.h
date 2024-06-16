@@ -1,6 +1,12 @@
 #pragma once
 #include "common.h"
 
+#define LIST_FIRST(HEAD) ((HEAD)->pFirst)
+#define LIST_NEXT(L) ((L)->pNext)
+#define LIST_PREV(L) ((L)->pPrev)
+#define LIST_FOREACH(L, IT) for (auto (IT) = LIST_FIRST(L); (IT); (IT) = LIST_NEXT(IT))
+#define LIST_FOREACH_SAFE(L, IT, TMPIT) for (typeof(LIST_FIRST(L)) (IT) = LIST_FIRST(L), (TMPIT) = NULL; (IT) && ((TMPIT) = LIST_NEXT(IT), true); (IT) = (TMPIT))
+
 #define LIST_GEN_CODE(NAME, T, CMP)                                                                                    \
     typedef struct NAME##Node                                                                                          \
     {                                                                                                                  \
@@ -44,21 +50,20 @@
                                                                                                                        \
     [[maybe_unused]] static inline void NAME##Clean(NAME* self)                                                        \
     {                                                                                                                  \
-        for (NAME##Node* it = self->pFirst; it;)                                                                       \
+        LIST_FOREACH_SAFE(self, it, t)                                                                                 \
         {                                                                                                              \
-            NAME##Node* pSNext = it->pNext;                                                                            \
             free(it);                                                                                                  \
-            it = pSNext;                                                                                               \
         }                                                                                                              \
     }                                                                                                                  \
                                                                                                                        \
     [[maybe_unused]] static inline NAME##Node* NAME##Search(NAME* self, T value)                                       \
     {                                                                                                                  \
-        for (NAME##Node* it = self->pFirst; it; it = it->pNext)                                                        \
+        LIST_FOREACH(self, it)                                                                                         \
         {                                                                                                              \
             if (CMP(it->data, value) == 0)                                                                             \
                 return it;                                                                                             \
         }                                                                                                              \
+                                                                                                                       \
         return NULL;                                                                                                   \
     }                                                                                                                  \
                                                                                                                        \
