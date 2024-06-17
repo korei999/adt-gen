@@ -11,10 +11,9 @@ endif()
 
 project(test VERSION 0.2 LANGUAGES C)
 
-add_compile_options(-Wall -Wextra)
-add_compile_definitions(test PRIVATE "-DLOGS") # used for LOG_* and COUT/CERR macros
-add_compile_definitions(test PRIVATE "-D_DEFAULT_SOURCE") # needed for reallocarray
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Werror=incompatible-pointer-types")
+add_compile_options(-Wall -Wextra -Werror=incompatible-pointer-types)
+add_compile_definitions("-DLOGS") # used for LOG_* and COUT/CERR macros
+add_compile_definitions("-D_DEFAULT_SOURCE") # needed for reallocarray
 
 add_executable(
     test
