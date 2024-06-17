@@ -1,7 +1,6 @@
 #pragma once
 
 #include <stdlib.h>
-#include <string.h>
 #include <time.h>
 
 #define LENGTH(A) (sizeof(A) / sizeof(A[0]))
@@ -10,9 +9,8 @@ static inline size_t
 hashFNV(const char* str)
 {
     size_t hash = 0xCBF29CE484222325;
-    size_t size = strlen(str);
-    for (size_t i = 0; i < size; i++)
-        hash = (hash ^ (size_t)str[i]) * 0x100000001B3;
+    for (; *str; str++)
+        hash = (hash ^ *str) * 0x100000001B3;
     return hash;
 }
 

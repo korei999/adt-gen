@@ -4,6 +4,8 @@
 #include "utils/logs.h"
 #include "utils/misc.h"
 
+#include <string.h>
+
 typedef char* pChar;
 HASHMAP_CHAINED_GEN_CODE(BorkedMap, ListStr, pChar, hashMurmurOAAT64, strcmp, ADT_HASHMAP_CHAINED_DEFAULT_LOAD_FACTOR);
 ARRAY_GEN_CODE(ArrayStr, pChar);

@@ -6,6 +6,8 @@
 #include "utils/misc.h"
 #include "ultratypes.h"
 
+#include <string.h>
+
 typedef char* pChar;
 HASHMAP_CHAINED_GEN_CODE(HashMapChStr, ListStr, pChar, hashMurmurOAAT64, strcmp, ADT_HASHMAP_CHAINED_DEFAULT_LOAD_FACTOR);
 HASHMAP_CHAINED_GEN_CODE(HashMapChStrFNV, ListStrFNV, pChar, hashFNV, strcmp, ADT_HASHMAP_CHAINED_DEFAULT_LOAD_FACTOR);
