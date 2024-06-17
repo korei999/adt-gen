@@ -19,7 +19,7 @@ enum _LOG_SEV
     _LOG_SEV_ENUM_SIZE
 };
 
-const char* _LOG_SEV_STR[] = {"", "GOOD: ", "WARNING: ", "BAD: ", "FATAL: "};
+static const char* _LOG_SEV_STR[] = {"", "GOOD: ", "WARNING: ", "BAD: ", "FATAL: "};
 
     #define _LOG(SEV, ...)                                                                                             \
         {                                                                                                              \
