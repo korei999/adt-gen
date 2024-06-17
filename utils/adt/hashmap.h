@@ -1,9 +1,10 @@
-
-/* Hash map with linear probing */
+#pragma once
+#include "common.h"
 
 #define ADT_HASHMAP_DEFAULT_LOAD_FACTOR 0.5
 
 #define HASHMAP_GEN_CODE(NAME, T, FNHASH, CMP, LOAD_FACTOR)                                                            \
+    /* Hash map with linear probing */                                                                                 \
     typedef struct NAME##Bucket                                                                                        \
     {                                                                                                                  \
         T data;                                                                                                        \
