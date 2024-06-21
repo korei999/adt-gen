@@ -10,7 +10,7 @@ hashFNV(const char* str)
 {
     size_t hash = 0xCBF29CE484222325;
     for (; *str; str++)
-        hash = (hash ^ *str) * 0x100000001B3;
+        hash ^= *str * 0x100000001B3;
     return hash;
 }
 

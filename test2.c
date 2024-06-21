@@ -15,7 +15,7 @@ HASHMAP_GEN_CODE(HashMapStr, pChar, hashMurmurOAAT64, strcmp, ADT_HASHMAP_DEFAUL
 HASHMAP_GEN_CODE(HashMapStrFNV, pChar, hashFNV, strcmp, ADT_HASHMAP_DEFAULT_LOAD_FACTOR);
 ARRAY_GEN_CODE(ArrayStr, pChar);
 
-#define SIZE 5000
+#define SIZE 7777
 #define MAX_STRING_SIZE 20
 
 typedef struct Arg0
@@ -171,6 +171,7 @@ main()
     auto hm1 = HashMapStrCreate(ADT_DEFAULT_SIZE);
     auto hm2 = HashMapChStrFNVCreate(ADT_DEFAULT_SIZE);
     auto hm3 = HashMapStrFNVCreate(ADT_DEFAULT_SIZE);
+
     COUT("hm0.capacity: %zu\n", hm0.capacity);
 
     auto aClean = ArrayStrCreate(SIZE);
