@@ -12,7 +12,7 @@ endif()
 project(test VERSION 0.2 LANGUAGES C)
 
 add_compile_options(-Wall -Wextra -Werror=incompatible-pointer-types)
-add_compile_definitions("-DLOGS") # used for LOG_* and COUT/CERR macros
+add_compile_definitions("-DLOGS") # used for LOG_* macros
 add_compile_definitions("-D_DEFAULT_SOURCE") # needed for reallocarray
 
 # add_executable(
