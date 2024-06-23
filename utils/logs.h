@@ -1,13 +1,13 @@
 #pragma once
+#include "genarg.h"
 
 #include <assert.h>
-#include <stdio.h>
 #include <stdlib.h>
 
 #ifdef LOGS
 
-    #define COUT(...) fprintf(stdout, __VA_ARGS__)
-    #define CERR(...) fprintf(stderr, __VA_ARGS__)
+    #define COUT(...) fprintg(stdout, __VA_ARGS__)
+    #define CERR(...) fprintg(stderr, __VA_ARGS__)
 
 enum _LOG_SEV
 {
