@@ -6,6 +6,12 @@
 
 #ifdef LOGS
 
+#define COUT(FMT, ...) fprintg(stdout, FMT, GAS(VA_NARGS(__VA_ARGS__), __VA_ARGS__))
+#define CERR(FMT, ...) fprintg(stderr, FMT, GAS(VA_NARGS(__VA_ARGS__), __VA_ARGS__))
+
+#define COUTG(...) fprintg(stdout, __VA_ARGS__)
+#define CERRG(...) fprintg(stderr, __VA_ARGS__)
+
 enum _LOG_SEV
 {
     _LOG_SEV_OK,

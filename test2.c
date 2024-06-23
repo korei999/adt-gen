@@ -2,7 +2,6 @@
 #include "utils/adt/hashmap.h"
 #include "utils/adt/hashmapChained.h"
 #include "utils/adt/threadpool.h"
-#include "utils/genarg.h"
 #include "utils/logs.h"
 #include "utils/misc.h"
 #include "ultratypes.h"

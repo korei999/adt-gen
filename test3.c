@@ -24,7 +24,7 @@ printMap(const BorkedMap* pMap)
             COUT("(bucket: %zu): ", i);
             for (auto it = pMap->pBuckets[i].pFirst; it; it = it->pNext)
                 COUT("'%s' ", it->data);
-            COUT("\n");
+            COUT("\n", 0);
         }
     }
 }
@@ -76,15 +76,16 @@ main()
 
     for (long i = 0; i < q.capacity; i++)
         COUT("%ld: %d\n", i, q.pData[i]);
-    COUT("\n");
+    COUT("\n", 0);
 
     QUEUE_FOREACH_I(&q, i)
         COUT("%ld: %d\n", i, q.pData[i]);
-    COUT("\n");
+    COUT("\n", 0);
 
     QUEUE_FOREACH_I_REV(&q, i)
         COUT("%ld: %d\n", i, q.pData[i]);
-    COUT("\n");
+    COUT("\n", 0);
 
     IntQClean(&q);
 }
+

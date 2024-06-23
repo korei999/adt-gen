@@ -64,15 +64,15 @@ HASHMAP_GEN_CODE(HashMapInt, int, hashInt, intCmp, ADT_HASHMAP_DEFAULT_LOAD_FACT
 void
 printMap(const HashMapPChar* pMap)
 {
-    COUT("mapS.size: %zu, cap: %zu\n", pMap->bucketCount, pMap->capacity);
+    COUT("mapS.size: {}, cap: {}\n", pMap->bucketCount, pMap->capacity);
     for (size_t i = 0; i < pMap->capacity; i++)
     {
         if (pMap->pBuckets[i].pFirst)
         {
-            COUT("(bucket: %zu): ", i);
+            COUT("(bucket: {}): ", i);
             for (auto it = pMap->pBuckets[i].pFirst; it; it = it->pNext)
-                COUT("'%s' ", it->data);
-            COUT("\n");
+                COUT("'{}' ", it->data);
+            COUT("\n", 0);
         }
     }
 }
@@ -86,7 +86,8 @@ hello0([[maybe_unused]] void* pArg)
     // long i = 0;
     // while (i++ <= 999999999)
         // ;
-    COUT("%d, ", ++ai);
+    COUT("{}, ", ai);
+    ai++;
     return 0;
 }
 
@@ -97,7 +98,8 @@ hello1([[maybe_unused]] void* pArg)
     // double i = 0;
     // while (i++ <= 19999999.9f)
         // ;
-    COUT("%d, ", ++ai);
+    COUT("{}, ", ai);
+    ai++;
     return 0;
 }
 
@@ -113,19 +115,19 @@ main()
     IntQPush(&q, 6);
 
     for (long t = 0; t < q.size; t++)
-        COUT("'%d', ", q.pData[t]);
-    COUT("\n");
+        COUT("'{}', ", q.pData[t]);
+    COUT("\n", 0);
 
     IntQPop(&q);
     IntQPop(&q);
 
     QUEUE_FOREACH_I(&q, i)
-        COUT("'%d', ", q.pData[i]);
-    COUT("\n");
+        COUT("'{}', ", q.pData[i]);
+    COUT("\n", 0);
 
     IntQClean(&q);
 
-    COUT("available threads: %d\n", hwConcurrency());
+    COUT("available threads: {}\n", hwConcurrency());
     auto tp = ThreadPoolCreate(hwConcurrency());
     ThreadPoolStart(&tp);
 
@@ -144,12 +146,12 @@ main()
         else
             ThreadPoolSubmit(&tp, j1);
 
-    COUT("wait...\n");
+    COUT("wait...\n", 0);
     ThreadPoolWait(&tp);
     ThreadPoolStop(&tp);
     ThreadPoolClean(&tp);
 
-    COUT("\n");
+    COUT("\n", 0);
 
     auto hm = HashMapPCharCreate(1);
     HashMapPCharInsert(&hm, "what");
@@ -159,15 +161,15 @@ main()
     HashMapPCharInsert(&hm, "then");
 
     auto found0 = HashMapPCharSearch(&hm, "what");
-    COUT("found: '%s', hash: '%zu'\n", found0.pNode ? found0.pNode->data : "(nill)", found0.hash);
+    COUT("found: '{}', hash: '{}'\n", found0.pNode ? found0.pNode->data : "(nill)", found0.hash);
 
     auto found1 = HashMapPCharSearch(&hm, "kekw");
-    COUT("found: '%s', hash: '%zu'\n", found1.pNode ? found1.pNode->data : "(nill)", found1.hash);
+    COUT("found: '{}', hash: '{}'\n", found1.pNode ? found1.pNode->data : "(nill)", found1.hash);
 
     auto t0 = HashMapPCharTryInsert(&hm, "asdf");
     auto t1 = HashMapPCharTryInsert(&hm, "what");
-    COUT("'%s': %s, hash: %zu\n", t0.pNode ? t0.pNode->data : "(nill)", t0.bInserted ? "true" : "false", t0.hash);
-    COUT("'%s': %s, hash: %zu\n", t1.pNode ? t1.pNode->data : "(nill)", t1.bInserted ? "true" : "false", t1.hash);
+    COUT("'{}': %s, hash: %{}\n", t0.pNode ? t0.pNode->data : "(nill)", t0.bInserted ? "true" : "false", t0.hash);
+    COUT("'{}': %s, hash: %{}\n", t1.pNode ? t1.pNode->data : "(nill)", t1.bInserted ? "true" : "false", t1.hash);
 
     printMap(&hm);
 
@@ -178,20 +180,20 @@ main()
     /* return nodes are invalidated if `Rehash()` has been called */
     auto what = HashMap2PCharInsert(&hm2, "what");
     auto what2 = HashMap2PCharInsert(&hm2, "what");
-    COUT("what : '%s', hash: %zu, i: %zu\n", *what.pData, what.hash, what.idx);
-    COUT("what2: '%s', hash: %zu, i: %zu\n", *what2.pData, what2.hash, what2.idx);
+    COUT("what : '{}', hash: {}, i: {}\n", *what.pData, what.hash, what.idx);
+    COUT("what2: '{}', hash: {}, i: {}\n", *what2.pData, what2.hash, what2.idx);
     auto f0 = HashMap2PCharSearch(&hm2, "what");
-    COUT("f0: '%s'\n", *f0.pData);
+    COUT("f0: '{}'\n", *f0.pData);
     auto f1 = HashMap2PCharSearch(&hm2, "kekw");
-    COUT("f1: '%s'\n", f1.pData ? *f1.pData : "(nill)");
-    COUT("hm2.loadFactor: %lf\n", HashMap2PCharLoadFactor(&hm2));
+    COUT("f1: '{}'\n", f1.pData ? *f1.pData : "(nill)");
+    COUT("hm2.loadFactor: {}\n", HashMap2PCharLoadFactor(&hm2));
 
     /* doesn't actually removes but marks as unoccupied and deleted */
     HashMap2PCharRemove(&hm2, f0.idx);
-    COUT("f0: '%s'\n", f0.pData ? *f0.pData : "(nill)");
+    COUT("f0: '{}'\n", f0.pData ? *f0.pData : "(nill)");
     /* but will still find if wasn't replaced */
     auto f2 = HashMap2PCharSearch(&hm2, *f0.pData);
-    COUT("f2: '%s'\n", f2.pData ? *f2.pData : "(nill)");
+    COUT("f2: '{}'\n", f2.pData ? *f2.pData : "(nill)");
 
     HashMap2PCharClean(&hm2);
 
@@ -200,7 +202,7 @@ main()
     HashMapIntInsert(&hm3, 2);
     HashMapIntInsert(&hm3, 3);
     auto f3_0 = HashMapIntSearch(&hm3, 3);
-    COUT("f3_0: '%d'\n", f3_0.pData ? *f3_0.pData : 0);
+    COUT("f3_0: '{}'\n", f3_0.pData ? *f3_0.pData : 0);
 
     HashMapIntClean(&hm3);
 

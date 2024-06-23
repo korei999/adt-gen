@@ -3,8 +3,9 @@
 #include <stdarg.h>
 #include <stdio.h>
 
-/* dumbest shit but works */
-/* up to 20 arguments */
+/* dumbest shit but works
+ * up to 20 arguments
+ * 0 args won't work, at least i don't know how to make it work */
 #define __ADD_GA1(x, ...) GA(x)
 #define __ADD_GA2(x, ...) GA(x), __ADD_GA1(__VA_ARGS__)
 #define __ADD_GA3(x, ...) GA(x), __ADD_GA2(__VA_ARGS__)
@@ -32,12 +33,6 @@
 /* now this is busted */
 #define VA_NARGS_IMPL(_1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15, _16, _17, _18, _19, _20, N, ...) N
 #define VA_NARGS(...) VA_NARGS_IMPL(__VA_ARGS__, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1)
-
-#define COUT(FMT, ...) fprintg(stdout, FMT, GAS(VA_NARGS(__VA_ARGS__), __VA_ARGS__))
-#define CERR(FMT, ...) fprintg(stderr, FMT, GAS(VA_NARGS(__VA_ARGS__), __VA_ARGS__))
-
-#define COUTG(...) fprintg(stdout, __VA_ARGS__)
-#define CERRG(...) fprintg(stderr, __VA_ARGS__)
 
 #define GA_NEW(TAG, VAL) (GenArg){.tag = TAG, .data.TAG = {VAL}}
 

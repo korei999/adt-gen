@@ -12,23 +12,23 @@ endif()
 project(test VERSION 0.2 LANGUAGES C)
 
 add_compile_options(-Wall -Wextra -Werror=incompatible-pointer-types)
-add_compile_definitions("-DLOGS") # used for LOG_* macros
+add_compile_definitions("-DLOGS") # used for LOG_* CERR*/COUT* macros
 add_compile_definitions("-D_DEFAULT_SOURCE") # needed for reallocarray
 
-# add_executable(
-#     test
-#     "test.c"
-# )
+add_executable(
+    test
+    "test.c"
+)
 
 add_executable(
     test2
     "test2.c"
 )
 
-# add_executable(
-#     test3
-#     "test3.c"
-# )
+add_executable(
+    test3
+    "test3.c"
+)
 
 if (CMAKE_BUILD_TYPE MATCHES "Asan")
     set(CMAKE_BUILD_TYPE "Debug")
