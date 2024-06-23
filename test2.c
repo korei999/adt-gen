@@ -71,7 +71,7 @@ done:
 
     *pA.pTime = tChained;
 
-    COUT("task0 done\n", 0);
+    COUT("task0 done\n");
     return 0;
 };
 
@@ -100,7 +100,7 @@ done:
 
     *pA.pTime = tLinear;
 
-    COUT("task1 done\n", 0);
+    COUT("task1 done\n");
     return 0;
 };
 
@@ -129,7 +129,7 @@ done:
 
     *pA.pTime = tLinear;
 
-    COUT("task2 done\n", 0);
+    COUT("task2 done\n");
     return 0;
 };
 
@@ -158,7 +158,7 @@ done:
 
     *pA.pTime = tLinear;
 
-    COUT("task3 done\n", 0);
+    COUT("task3 done\n");
     return 0;
 };
 
