@@ -6,9 +6,6 @@
 
 #ifdef LOGS
 
-    #define COUT(...) fprintg(stdout, __VA_ARGS__)
-    #define CERR(...) fprintg(stderr, __VA_ARGS__)
-
 enum _LOG_SEV
 {
     _LOG_SEV_OK,
@@ -19,12 +16,12 @@ enum _LOG_SEV
     _LOG_SEV_ENUM_SIZE
 };
 
-static const char* _LOG_SEV_STR[] = {"", "GOOD: ", "WARNING: ", "BAD: ", "FATAL: "};
+[[maybe_unused]] static const char* _LOG_SEV_STR[] = {"", "GOOD: ", "WARNING: ", "BAD: ", "FATAL: "};
 
     #define _LOG(SEV, ...)                                                                                             \
         {                                                                                                              \
             assert(SEV >= 0 && SEV < _LOG_SEV_ENUM_SIZE && "wrong _LOG_SEV*");                                         \
-            CERR("(%s%s, %d): ", _LOG_SEV_STR[SEV], __FILE__, __LINE__);                                               \
+            CERR("({}{}, {}): ", _LOG_SEV_STR[SEV], __FILE__, __LINE__);                                               \
             CERR(__VA_ARGS__);                                                                                         \
             switch (SEV)                                                                                               \
             {                                                                                                          \
