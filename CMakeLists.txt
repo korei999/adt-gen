@@ -30,6 +30,11 @@ add_executable(
     "test3.c"
 )
 
+find_library(MATH m REQUIRED)
+target_link_libraries(test PRIVATE m)
+target_link_libraries(test2 PRIVATE m)
+target_link_libraries(test3 PRIVATE m)
+
 if (CMAKE_BUILD_TYPE MATCHES "Asan")
     set(CMAKE_BUILD_TYPE "Debug")
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fsanitize=undefined -fsanitize=address")
