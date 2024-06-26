@@ -83,7 +83,7 @@ ArenaAlloc(Arena* a, size_t bytes)
         if (!pLast->pNext)
             pLast->pNext = ArenaBlockNew(a->cap);
 
-        a->pLast = pLast->pNext;
+        pLast = a->pLast = pLast->pNext;
     }
 
     pRBlock = &pLast->pData[pLast->size];
