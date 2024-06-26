@@ -1,9 +1,13 @@
 #pragma once
+#include "adt/pair.h"
 
-#include <stdlib.h>
+#include <stdio.h>
 #include <time.h>
 
 #define LENGTH(A) (sizeof(A) / sizeof(A[0]))
+
+typedef char* pVoid;
+PAIR_GEN_CODE(Slice, pVoid, size_t);
 
 static inline size_t
 hashFNV(const char* str)
@@ -67,4 +71,27 @@ msTimeNow()
     time_t micros = ts.tv_sec * 1000000000;
     micros += ts.tv_nsec;
     return micros / 1000000.0;
+}
+
+static inline Slice
+loadFile(const void* path)
+{
+    Slice sl = {0};
+
+    FILE* pf = fopen(path, "rb");
+    if (pf)
+    {
+        fseek(pf, 0, SEEK_END);
+        sl.size = ftell(pf) + 1;
+        rewind(pf);
+
+        sl.data = (void*)malloc(sl.size);
+        fread(sl.data, 1, sl.size, pf);
+        sl.data[sl.size - 1] = 0;
+
+        fclose(pf);
+    }
+
+
+    return sl;
 }

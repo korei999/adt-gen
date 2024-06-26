@@ -9,44 +9,6 @@
 
 #define LENGTH(A) (sizeof(A) / sizeof(A[0]))
 
-static inline size_t
-hashFNV(const char* str)
-{
-    size_t hash = 0xCBF29CE484222325;
-    size_t size = strlen(str);
-    for (size_t i = 0; i < size; i++)
-        hash = (hash ^ (size_t)str[i]) * 0x100000001B3;
-    return hash;
-}
-
-static inline size_t
-hashInt(int num)
-{
-    return num;
-}
-
-static inline int
-intCmp(int a, int b)
-{
-    if (a > b) return 1;
-    else if (a < b) return -1;
-    else return 0;
-}
-
-[[maybe_unused]] static inline void
-randomString(char* dest, size_t length)
-{
-    const char charset[] = "0123456789"
-                           "abcdefghijklmnopqrstuvwxyz"
-                           "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    for (size_t i = 0; i < length - 1; i++)
-    {
-        size_t idx = rand() % (LENGTH(charset) - 1);
-        dest[i] = charset[idx];
-    }
-    dest[length - 1] = '\0';
-}
-
 typedef char* pChar;
 
 HASHMAP_CHAINED_GEN_CODE(HashMapPChar, ListPChar, pChar, hashFNV, strcmp, ADT_HASHMAP_CHAINED_DEFAULT_LOAD_FACTOR);
