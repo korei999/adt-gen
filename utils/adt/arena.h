@@ -3,10 +3,12 @@
 
 #include <math.h>
 #include <stdint.h>
+#include <string.h>
 
-#define ARENA_1K 1024
-#define ARENA_4K (4 * ARENA_4K)
-#define ARENA_1M (ARENA_1K * ARENA_1K)
+#define ARENA_1K (1024UL)
+#define ARENA_4K (4UL * (size_t)ARENA_1K)
+#define ARENA_1M ((size_t)ARENA_1K * 1024UL)
+#define ARENA_1G ((size_t)ARENA_1M * 1024UL)
 
 #define ARENA_FIRST(A) ((A)->pFirst)
 #define ARENA_NEXT(AB) ((AB)->pNext)
@@ -90,6 +92,25 @@ ArenaAlloc(Arena* a, size_t bytes)
     pLast->size += alignedSize;
 
     return pRBlock;
+}
+
+static inline void*
+ArenaRealloc(Arena* a, void* pSrc, size_t nbytes, size_t newBytes)
+{
+    void* pDest = ArenaAlloc(a, newBytes);
+    memcpy(pDest, pSrc, nbytes);
+
+    return pDest;
+}
+
+static inline void*
+ArenaCalloc(Arena* a, size_t nmemb, size_t size)
+{
+    void* pDest = ArenaAlloc(a, nmemb * size);
+    size_t alignedSize = ArenaAlignedSize(nmemb * size);
+    memset(pDest, 0, alignedSize);
+
+    return pDest;
 }
 
 static inline void
