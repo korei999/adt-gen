@@ -26,6 +26,8 @@ typedef struct Arena
 {
     ArenaBlock* pFirst;
     ArenaBlock* pLast;
+    void* pLastAllocatedBlock;
+    size_t lastAllocationSize;
     const size_t cap;
 } Arena;
 
@@ -58,6 +60,7 @@ ArenaCreate(size_t bytes)
     Arena a = {.cap = alignedSize};
     ArenaBlock* pNew = ArenaBlockNew(alignedSize);
     a.pLast = a.pFirst = pNew;
+    a.pLastAllocatedBlock = nullptr;
 
     return a;
 }
@@ -89,6 +92,9 @@ ArenaAlloc(Arena* a, size_t bytes)
     }
 
     pRBlock = &pLast->pData[pLast->size];
+    a->pLastAllocatedBlock = pRBlock;
+    a->lastAllocationSize = pLast->size;
+
     pLast->size += alignedSize;
 
     return pRBlock;
@@ -97,8 +103,19 @@ ArenaAlloc(Arena* a, size_t bytes)
 static inline void*
 ArenaRealloc(Arena* a, void* pSrc, size_t nbytes, size_t newBytes)
 {
-    void* pDest = ArenaAlloc(a, newBytes);
-    memcpy(pDest, pSrc, nbytes);
+    void* pDest = nullptr;
+    size_t alignedSize = ArenaAlignedSize(newBytes);
+
+    if (a->pLastAllocatedBlock == pSrc && (a->lastAllocationSize + alignedSize) < a->cap)
+    {
+        a->pLast->size = a->lastAllocationSize + alignedSize;
+        pDest = pSrc;
+    }
+    else
+    {
+        pDest = ArenaAlloc(a, newBytes);
+        memcpy(pDest, pSrc, nbytes);
+    }
 
     return pDest;
 }
