@@ -17,7 +17,7 @@ HASHMAP_GEN_CODE(HashMapStr, pChar, hashMurmurOAAT64, strcmp, ADT_HASHMAP_DEFAUL
 HASHMAP_GEN_CODE(HashMapStrFNV, pChar, hashFNV, strcmp, ADT_HASHMAP_DEFAULT_LOAD_FACTOR);
 ARRAY_GEN_CODE(ArrayStr, pChar);
 
-#define SIZE 3333
+#define SIZE 7777
 #define MAX_STRING_SIZE 20
 
 typedef struct Arg0
@@ -169,7 +169,7 @@ main()
 {
     srand(time(NULL));
 
-    Arena af = ArenaCreate(ARENA_1G);
+    Arena af = ArenaCreate(ARENA_05G);
 
     auto hm0 = HashMapChStrCreate(&af, ADT_DEFAULT_SIZE);
     auto hm1 = HashMapStrCreate(&af, ADT_DEFAULT_SIZE);

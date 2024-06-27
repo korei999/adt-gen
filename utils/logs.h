@@ -1,7 +1,8 @@
 #pragma once
-#include "misc.h"
+#include "adt/pair.h"
 
 #include <stdarg.h>
+#include <stdio.h>
 
 #ifdef LOGS
 
