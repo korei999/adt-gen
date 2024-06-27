@@ -13,6 +13,7 @@
         size_t bucketCount;                                                                                            \
         size_t entryCount;                                                                                             \
         size_t capacity;                                                                                               \
+        Arena* pArena;                                                                                                 \
     } NAME;                                                                                                            \
                                                                                                                        \
     typedef struct NAME##ReturnNode                                                                                    \
@@ -24,17 +25,15 @@
                                                                                                                        \
     static inline LIST##Node* NAME##Insert(NAME* self, T value);                                                       \
                                                                                                                        \
-    [[maybe_unused]] static inline NAME NAME##Create(size_t cap)                                                       \
+    [[maybe_unused]] static inline NAME NAME##Create(Arena* a, size_t cap)                                             \
     {                                                                                                                  \
         assert(cap > 0 && "cap should be > 0");                                                                        \
-        return (NAME) {.pBuckets = (LIST*)calloc(cap, sizeof(LIST)), .bucketCount = 0, .capacity = cap};               \
-    }                                                                                                                  \
+        NAME mapNew = {.bucketCount = 0, .capacity = cap, .entryCount = 0, .pArena = a};                               \
+        mapNew.pBuckets = ArenaCalloc(a, cap, sizeof(LIST));                                                           \
+        for (size_t i = 0; i < cap; i++)                                                                               \
+            mapNew.pBuckets[i].pArena = a;                                                                             \
                                                                                                                        \
-    [[maybe_unused]] static inline void NAME##Clean(NAME* self)                                                        \
-    {                                                                                                                  \
-        for (size_t i = 0; i < self->capacity; i++)                                                                    \
-            LIST##Clean(&self->pBuckets[i]);                                                                           \
-        free(self->pBuckets);                                                                                          \
+        return mapNew;                                                                                                 \
     }                                                                                                                  \
                                                                                                                        \
     [[maybe_unused]] static inline double NAME##LoadFactor(NAME* self)                                                 \
@@ -44,14 +43,13 @@
                                                                                                                        \
     [[maybe_unused]] static inline void NAME##Rehash(NAME* self, size_t cap)                                           \
     {                                                                                                                  \
-        NAME newMap = NAME##Create(cap);                                                                               \
+        NAME newMap = NAME##Create(self->pArena, cap);                                                                 \
                                                                                                                        \
         for (size_t i = 0; i < self->capacity; i++)                                                                    \
             if (self->pBuckets[i].pFirst)                                                                              \
                 for (LIST##Node* it = self->pBuckets[i].pFirst; it; it = it->pNext)                                    \
                     NAME##Insert(&newMap, it->data);                                                                   \
                                                                                                                        \
-        NAME##Clean(self);                                                                                             \
         *self = newMap;                                                                                                \
     }                                                                                                                  \
                                                                                                                        \

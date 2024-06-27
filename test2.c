@@ -17,7 +17,7 @@ HASHMAP_GEN_CODE(HashMapStr, pChar, hashMurmurOAAT64, strcmp, ADT_HASHMAP_DEFAUL
 HASHMAP_GEN_CODE(HashMapStrFNV, pChar, hashFNV, strcmp, ADT_HASHMAP_DEFAULT_LOAD_FACTOR);
 ARRAY_GEN_CODE(ArrayStr, pChar);
 
-#define SIZE 1111
+#define SIZE 3333
 #define MAX_STRING_SIZE 20
 
 typedef struct Arg0
@@ -169,21 +169,21 @@ main()
 {
     srand(time(NULL));
 
-    Arena af = ArenaCreate(ARENA_4K);
+    Arena af = ArenaCreate(ARENA_1G);
 
-    auto hm0 = HashMapChStrCreate(ADT_DEFAULT_SIZE);
-    auto hm1 = HashMapStrCreate(ADT_DEFAULT_SIZE);
-    auto hm2 = HashMapChStrFNVCreate(ADT_DEFAULT_SIZE);
-    auto hm3 = HashMapStrFNVCreate(ADT_DEFAULT_SIZE);
+    auto hm0 = HashMapChStrCreate(&af, ADT_DEFAULT_SIZE);
+    auto hm1 = HashMapStrCreate(&af, ADT_DEFAULT_SIZE);
+    auto hm2 = HashMapChStrFNVCreate(&af, ADT_DEFAULT_SIZE);
+    auto hm3 = HashMapStrFNVCreate(&af, ADT_DEFAULT_SIZE);
 
     COUT("hm0.capacity: {}\n", hm0.capacity);
 
-    auto aClean = ArrayStrCreate(SIZE);
+    auto aStrings = ArrayStrCreate(SIZE);
 
     for (size_t i = 0; i < SIZE; i++)
     {
         char* rStr = randomString(&af, (rand() % (MAX_STRING_SIZE - 3)) + 3);
-        ArrayStrPush(&aClean, rStr);
+        ArrayStrPush(&aStrings, rStr);
 
         HashMapChStrInsert(&hm0, rStr);
         HashMapStrInsert(&hm1, rStr);
@@ -198,25 +198,25 @@ main()
     Arg0 a0 = {
         .pTime = &tCh,
         .pMap = &hm0,
-        .pArr = &aClean,
+        .pArr = &aStrings,
     };
 
     Arg1 a1 = {
         .pTime = &tLin,
         .pMap = &hm1,
-        .pArr = &aClean,
+        .pArr = &aStrings,
     };
 
     Arg2 a2 = {
         .pTime = &tChFNV,
         .pMap = &hm2,
-        .pArr = &aClean,
+        .pArr = &aStrings,
     };
 
     Arg3 a3 = {
         .pTime = &tLinFNV,
         .pMap = &hm3,
-        .pArr = &aClean,
+        .pArr = &aStrings,
     };
 
     ThreadPoolStart(&tp);
@@ -232,18 +232,12 @@ main()
     LOG_OK("hm2(chaining FNV) spent searching: {} ms, loadFactor: {}, cap: {}\n", tChFNV, HashMapChStrFNVLoadFactor(&hm2), hm2.capacity);
     LOG_OK("hm3(linear probing FNV) spent searching: {} ms, loadFactor: {}, cap: {}\n", tLinFNV, HashMapStrFNVLoadFactor(&hm3), hm3.capacity);
 
-    HashMapChStrClean(&hm0);
-    HashMapStrClean(&hm1);
-    HashMapChStrFNVClean(&hm2);
-    HashMapStrFNVClean(&hm3);
+    auto lL = ListStrCreate(&af);
 
-    auto lL = ListStrCreate();
+    for (size_t i = 0; i < aStrings.size; i++)
+        ListStrPushBack(&lL, aStrings.pData[i]);
 
-    for (size_t i = 0; i < aClean.size; i++)
-        ListStrPushBack(&lL, aClean.pData[i]);
-
-    ListStrClean(&lL);
-    ArrayStrClean(&aClean);
+    ArrayStrClean(&aStrings);
 
     ThreadPoolStop(&tp);
     ThreadPoolClean(&tp);

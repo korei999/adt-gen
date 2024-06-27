@@ -1,5 +1,6 @@
 #pragma once
 #include "common.h"
+#include "arena.h"
 
 #define LIST_FIRST(HEAD) ((HEAD)->pFirst)
 #define LIST_LAST(HEAD) ((HEAD)->pLast)
@@ -22,16 +23,17 @@
         NAME##Node* pFirst;                                                                                            \
         NAME##Node* pLast;                                                                                             \
         size_t size;                                                                                                   \
+        Arena* pArena;                                                                                                 \
     } NAME;                                                                                                            \
                                                                                                                        \
-    [[maybe_unused]] static inline NAME NAME##Create()                                                                 \
+    [[maybe_unused]] static inline NAME NAME##Create(Arena* a)                                                         \
     {                                                                                                                  \
-        return (NAME) {.pFirst = NULL, .pLast = NULL, .size = 0};                                                      \
+        return (NAME) {.pFirst = NULL, .pLast = NULL, .size = 0, .pArena = a};                                         \
     }                                                                                                                  \
                                                                                                                        \
     [[maybe_unused]] static inline NAME##Node* NAME##PushBack(NAME* self, T value)                                     \
     {                                                                                                                  \
-        NAME##Node* pNew = (NAME##Node*)calloc(1, sizeof(NAME##Node));                                                 \
+        NAME##Node* pNew = (NAME##Node*)ArenaCalloc(self->pArena, 1, sizeof(NAME##Node));                              \
         pNew->data = value;                                                                                            \
                                                                                                                        \
         if (!self->pFirst)                                                                                             \
@@ -48,14 +50,6 @@
         }                                                                                                              \
                                                                                                                        \
         return pNew;                                                                                                   \
-    }                                                                                                                  \
-                                                                                                                       \
-    [[maybe_unused]] static inline void NAME##Clean(NAME* self)                                                        \
-    {                                                                                                                  \
-        LIST_FOREACH_SAFE(self, it, t)                                                                                 \
-        {                                                                                                              \
-            free(it);                                                                                                  \
-        }                                                                                                              \
     }                                                                                                                  \
                                                                                                                        \
     [[maybe_unused]] static inline NAME##Node* NAME##Search(NAME* self, T value)                                       \
