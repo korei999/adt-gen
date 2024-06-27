@@ -6,9 +6,9 @@
 #include <string.h>
 
 #define ARENA_1K (1024UL)
-#define ARENA_4K (4UL * (size_t)ARENA_1K)
-#define ARENA_1M ((size_t)ARENA_1K * 1024UL)
-#define ARENA_1G ((size_t)ARENA_1M * 1024UL)
+#define ARENA_4K (ARENA_1K * 4UL)
+#define ARENA_1M (ARENA_1K * 1024UL)
+#define ARENA_1G (ARENA_1M * 1024UL)
 
 #define ARENA_FIRST(A) ((A)->pFirst)
 #define ARENA_NEXT(AB) ((AB)->pNext)
@@ -34,12 +34,11 @@ typedef struct Arena
 static inline size_t
 ArenaAlignedSize(size_t bytes)
 {
-    size_t newSize = bytes;
-    double mulOf = (double)newSize / (double)sizeof(long);
-    size_t cMulOfl = ceil(mulOf);
-    newSize = sizeof(long) * cMulOfl;
+    double mulOf = (double)bytes / (double)sizeof(long);
+    size_t mulAligned = ceil(mulOf);
+    bytes = sizeof(size_t) * mulAligned;
 
-    return newSize;
+    return bytes;
 }
 
 static inline ArenaBlock*
@@ -106,6 +105,7 @@ ArenaRealloc(Arena* a, void* pSrc, size_t nbytes, size_t newBytes)
     void* pDest = nullptr;
     size_t alignedSize = ArenaAlignedSize(newBytes);
 
+    /* just bump if there is nothing in front */
     if (a->pLastAllocatedBlock == pSrc && (a->lastAllocationSize + alignedSize) < a->cap)
     {
         a->pLast->size = a->lastAllocationSize + alignedSize;
