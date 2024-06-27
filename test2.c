@@ -1,10 +1,12 @@
+#include "utils/adt/arena.h"
 #include "utils/adt/array.h"
 #include "utils/adt/hashmap.h"
 #include "utils/adt/hashmapChained.h"
 #include "utils/adt/threadpool.h"
+
+#include "ultratypes.h"
 #include "utils/logs.h"
 #include "utils/misc.h"
-#include "ultratypes.h"
 
 #include <string.h>
 
@@ -15,7 +17,7 @@ HASHMAP_GEN_CODE(HashMapStr, pChar, hashMurmurOAAT64, strcmp, ADT_HASHMAP_DEFAUL
 HASHMAP_GEN_CODE(HashMapStrFNV, pChar, hashFNV, strcmp, ADT_HASHMAP_DEFAULT_LOAD_FACTOR);
 ARRAY_GEN_CODE(ArrayStr, pChar);
 
-#define SIZE 7777
+#define SIZE 1111
 #define MAX_STRING_SIZE 20
 
 typedef struct Arg0
@@ -167,6 +169,8 @@ main()
 {
     srand(time(NULL));
 
+    Arena af = ArenaCreate(ARENA_4K);
+
     auto hm0 = HashMapChStrCreate(ADT_DEFAULT_SIZE);
     auto hm1 = HashMapStrCreate(ADT_DEFAULT_SIZE);
     auto hm2 = HashMapChStrFNVCreate(ADT_DEFAULT_SIZE);
@@ -178,7 +182,7 @@ main()
 
     for (size_t i = 0; i < SIZE; i++)
     {
-        char* rStr = randomString((rand() % (MAX_STRING_SIZE - 3)) + 3);
+        char* rStr = randomString(&af, (rand() % (MAX_STRING_SIZE - 3)) + 3);
         ArrayStrPush(&aClean, rStr);
 
         HashMapChStrInsert(&hm0, rStr);
@@ -238,14 +242,13 @@ main()
     for (size_t i = 0; i < aClean.size; i++)
         ListStrPushBack(&lL, aClean.pData[i]);
 
-    for (size_t i = 0; i < aClean.size; i++)
-        free(aClean.pData[i]);
-
     ListStrClean(&lL);
     ArrayStrClean(&aClean);
 
     ThreadPoolStop(&tp);
     ThreadPoolClean(&tp);
+
+    ArenaFree(&af);
 
     return 0;
 }

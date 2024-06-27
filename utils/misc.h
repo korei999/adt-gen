@@ -1,4 +1,5 @@
 #pragma once
+#include "adt/arena.h"
 #include "adt/pair.h"
 
 #include <stdio.h>
@@ -46,13 +47,14 @@ intCmp(int a, int b)
 }
 
 static inline char*
-randomString(size_t length)
+randomString(Arena* a, size_t length)
 {
     const char charset[] = "0123456789"
                            "abcdefghijklmnopqrstuvwxyz"
                            "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
-    char* ret = calloc(length, sizeof(char));
+    /*char* ret = calloc(length, sizeof(char));*/
+    char* ret = ArenaCalloc(a, length, sizeof(char));
 
     for (size_t i = 0; i < length - 1; i++)
     {
